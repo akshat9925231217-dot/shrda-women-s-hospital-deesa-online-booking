@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -875,6 +875,8 @@ const state = {
   selectedPay: 'UPI'
 };
 
+let cityMap, cityMarkerMap = {};
+
 function switchView(id){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(`view-${id}`).classList.add('active');
@@ -888,12 +890,14 @@ function switchView(id){
 function setCity(city){
   state.city = city;
   document.getElementById('active-city-label').textContent = `${city.name}, ${city.state}`;
-  document.getElementById('loc-city').value = city.name;
-  if(cityMarkerMap[city.name]){
+  const loc = document.getElementById('loc-city');
+  if(loc) loc.value = city.name;
+  if(cityMap && cityMarkerMap[city.name]){
     cityMap.setView([city.lat, city.lng], 10, {animate:true});
     cityMarkerMap[city.name].openPopup();
   }
   renderCities();
+  renderTriageCities();
 }
 
 function renderSpecialties(){
@@ -909,194 +913,234 @@ function doctorCard(d, full=false){
     return `
       <div class="doc-full-card" onclick="openCheckout(${d.id})">
         <div class="doc-full-top">
-          <img class="doc-full-img" src="${d.img}" alt="${d.name}" onerror="this.style.display='none'">
+          <img class="doc-full-img" src="${d.img}" alt="${d.name}">
           <div class="doc-full-info">
-            <div class="verified-pill">✓ Verified Doctor</div>
+            <div class="verified-pill">✅ Verified Doctor</div>
             <div class="doc-full-name">${d.name}</div>
             <div class="doc-full-deg">${d.deg}</div>
-            <div class="doc-full-spec">${d.spec} · ${d.city}</div>
-            <div class="doc-full-exp">⭐ ${d.rating} · ${d.exp}</div>
+            <div class="doc-full-spec">${d.spec} • ★ ${d.rating}</div>
+            <div class="doc-full-exp">${d.exp}</div>
           </div>
         </div>
         <div class="doc-full-bottom">
           <div>
-            <div class="doc-hospital">${d.hospital}</div>
             <div class="doc-price">₹${d.fee}</div>
+            <div class="doc-hospital">${d.hospital}<br>${d.city}</div>
           </div>
-          <button class="btn-book" onclick="event.stopPropagation(); openCheckout(${d.id})">Book</button>
+          <button class="btn-book" onclick="event.stopPropagation();openCheckout(${d.id})">Book Now</button>
         </div>
       </div>`;
   }
   return `
     <div class="doc-card" onclick="openCheckout(${d.id})">
-      <img class="doc-card-img" src="${d.img}" alt="${d.name}" onerror="this.style.display='none'">
+      <img class="doc-card-img" src="${d.img}" alt="${d.name}">
       <div class="doc-card-body">
         <div class="doc-card-name">${d.name}</div>
         <div class="doc-card-spec">${d.spec}</div>
-        <div class="doc-card-meta">${d.city} · ${d.exp}<br>⭐ ${d.rating} · ${verified}</div>
+        <div class="doc-card-meta">${d.deg}<br>${d.exp}</div>
       </div>
       <div class="doc-card-bottom">
-        <div class="fee">₹${d.fee}</div>
-        <div class="badge ${d.available?'ok':'no'}">${d.available?'Available':'Busy'}</div>
+        <div>
+          <div class="fee">₹${d.fee}</div>
+          <div class="doc-card-meta">★ ${d.rating}</div>
+        </div>
+        ${verified}
       </div>
     </div>`;
 }
 
-function renderDoctors(filter='all'){
-  const list = filter==='featured' ? doctors.slice(0,4) : doctors.filter(d => filter==='all' || d.key===filter);
-  document.getElementById('featured-scroll').innerHTML = doctors.slice(0,4).map(d => doctorCard(d,false)).join('');
-  document.getElementById('home-doc-list').innerHTML = list.map(d => doctorCard(d,true)).join('');
-  document.getElementById('dir-list').innerHTML = list.map(d => doctorCard(d,true)).join('');
-  document.getElementById('dir-title').textContent = `${list.length}+ Doctors`;
-  document.getElementById('dir-lbl').textContent = filter==='all' ? 'All Specialists' : specialties.find(s=>s.id===filter)?.name || 'Specialists';
+function renderDoctors(list=doctors){
+  const featured = document.getElementById('featured-scroll');
+  const homeList = document.getElementById('home-doc-list');
+  const dirList = document.getElementById('dir-list');
+  const top = [...list].sort((a,b)=>b.rating-a.rating).slice(0,5);
+  featured.innerHTML = top.map(d => doctorCard(d,false)).join('');
+  homeList.innerHTML = list.map(d => doctorCard(d,true)).join('');
+  if(dirList) dirList.innerHTML = list.map(d => doctorCard(d,true)).join('');
 }
 
-function filterSpec(key){
-  document.querySelectorAll('.spec-chip').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.spec-chip').forEach(c => {
-    const label = c.querySelector('.spec-name')?.textContent?.toLowerCase();
-    const isActive = (key==='all' && label==='all') || label === (specialties.find(s=>s.id===key)?.name || '').toLowerCase();
-    if(isActive) c.classList.add('active');
+function filterSpec(id){
+  document.querySelectorAll('.spec-chip').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.spec-chip').forEach(x=>{
+    const txt = x.querySelector('.spec-name')?.textContent?.toLowerCase();
+    const match = id === 'all' || txt === specialties.find(s=>s.id===id)?.name?.toLowerCase();
+    if(match && x.parentElement.id !== 'dir-filter-scroll') x.classList.add('active');
   });
-  renderDoctors(key);
-  switchView('directory');
+  const filtered = id === 'all' ? doctors : doctors.filter(d => d.key === id);
+  renderDoctors(filtered);
+  const title = document.getElementById('dir-title');
+  const lbl = document.getElementById('dir-lbl');
+  if(title && lbl){
+    if(id === 'all'){ title.textContent = '2,400+ Doctors'; lbl.textContent = 'All Specialists';}
+    else { title.textContent = `${filtered.length} Doctors`; lbl.textContent = specialties.find(s=>s.id===id)?.name || 'Specialists';}
+  }
 }
 
 function selectOpt(el,key,val){
-  document.querySelectorAll(`#${el.closest('.triage-step').id} .opt-item`).forEach(x=>x.classList.remove('sel'));
+  document.querySelectorAll(`#${el.parentElement.parentElement.id} .opt-item`).forEach(x=>x.classList.remove('sel'));
   el.classList.add('sel');
   state.selected[key] = val;
-  document.getElementById(`ts${el.closest('.triage-step').id.slice(-1)}-next`).disabled = false;
+  const next = document.getElementById(`ts${currentStep()}-next`);
+  if(next) next.disabled = false;
 }
+
 function selectList(el,key,val){
-  document.querySelectorAll(`#${el.closest('.triage-step').id} .opt-list-item`).forEach(x=>x.classList.remove('sel'));
+  el.parentElement.querySelectorAll('.opt-list-item').forEach(x=>x.classList.remove('sel'));
   el.classList.add('sel');
   state.selected[key] = val;
-  document.getElementById(`ts${el.closest('.triage-step').id.slice(-1)}-next`).disabled = false;
+  const next = document.getElementById(`ts${currentStep()}-next`);
+  if(next) next.disabled = false;
 }
+
+function currentStep(){ return activeStep; }
+let activeStep = 1;
+
 function goStep(n){
+  activeStep = n;
   document.querySelectorAll('.triage-step').forEach(s=>s.classList.remove('active'));
   document.getElementById(`ts${n}`).classList.add('active');
   document.getElementById('step-counter').textContent = `Step ${n} of 5`;
   document.getElementById('progress-fill').style.width = `${n*20}%`;
-  const q = {
-    2:["How long has this been going on?","Tell us the duration of the issue."],
-    3:["How severe are the symptoms?","Choose the severity level."],
-    4:["How would you like to consult?","Pick your preferred consultation mode."],
-    5:["Which city should we search in?","Select your location."]
-  };
-  if(q[n]) document.getElementById('triage-q').textContent = q[n][0];
-  document.getElementById('triage-hint').textContent = q[n] ? q[n][1] : 'Select the category that best matches your symptoms.';
+  const q = [
+    "What's your main health concern?",
+    "How long have you had this?",
+    "How severe is it?",
+    "How would you like to consult?",
+    "Where are you located?"
+  ];
+  const h = [
+    "Select the category that best matches your symptoms.",
+    "This helps us match the right specialist.",
+    "This helps us understand urgency.",
+    "Choose the most convenient option.",
+    "We’ll find doctors near you."
+  ];
+  document.getElementById('triage-q').textContent = q[n-1];
+  document.getElementById('triage-hint').textContent = h[n-1];
+  if(n===5){
+    document.getElementById('ts5-next').disabled = !document.getElementById('loc-city').value.trim();
+  }
 }
-function checkLoc(){
-  const city = document.getElementById('loc-city').value.trim();
-  document.getElementById('ts5-next').disabled = city.length < 2;
-}
+
 function renderCities(){
-  document.getElementById('city-scroll').innerHTML = cities.map(c => `
-    <div class="city-chip ${state.city.name===c.name?'active':''}" onclick="setCity(cities.find(x=>x.name==='${c.name}'))">
-      <strong>${c.name}</strong>
-      <span>${c.state} · ${c.support}+ doctors</span>
-    </div>
-  `).join('');
-  document.getElementById('triage-city-scroll').innerHTML = cities.slice(0,8).map(c => `
-    <div class="city-chip ${state.city.name===c.name?'active':''}" onclick="setCity(cities.find(x=>x.name==='${c.name}'))">
-      <strong>${c.name}</strong>
-      <span>${c.state}</span>
-    </div>
-  `).join('');
+  const html = cities.map(c => `
+    <div class="city-chip ${state.city.name===c.name?'active':''}" onclick="setCity(${JSON.stringify(c).replaceAll('"','&quot;')})">
+      <strong>${c.name}</strong><span>${c.state} • ${c.support}+ doctors</span>
+    </div>`).join('');
+  const cityScroll = document.getElementById('city-scroll');
+  if(cityScroll) cityScroll.innerHTML = html;
 }
-let cityMap, cityMarkerMap = {};
+
+function renderTriageCities(){
+  const tri = document.getElementById('triage-city-scroll');
+  if(!tri) return;
+  tri.innerHTML = cities.slice(0,8).map(c => `
+    <div class="city-chip ${state.city.name===c.name?'active':''}" onclick="setCity(${JSON.stringify(c).replaceAll('"','&quot;')})">
+      <strong>${c.name}</strong><span>${c.state}</span>
+    </div>`).join('');
+}
+
 function initMap(){
   if(cityMap) return;
-  cityMap = L.map('city-map', {scrollWheelZoom:false}).setView([20.5937,78.9629],5);
+  cityMap = L.map('city-map').setView([22.9734, 78.6569], 5);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution:'&copy; OpenStreetMap contributors'
+    maxZoom: 18,
+    attribution: '&copy; OpenStreetMap contributors'
   }).addTo(cityMap);
-  cities.forEach(c=>{
-    const marker = L.marker([c.lat,c.lng]).addTo(cityMap).bindPopup(`<b>${c.name}</b><br>${c.state}<br>${c.support}+ doctors`);
-    marker.on('click',()=>setCity(c));
-    cityMarkerMap[c.name] = marker;
+  cities.forEach(city => {
+    const marker = L.marker([city.lat, city.lng]).addTo(cityMap).bindPopup(`<b>${city.name}</b><br>${city.state}<br>${city.support}+ doctors`);
+    marker.on('click', () => setCity(city));
+    cityMarkerMap[city.name] = marker;
   });
+  if(cityMarkerMap[state.city.name]) cityMarkerMap[state.city.name].openPopup();
 }
-function showTriageResults(){
-  const cityName = document.getElementById('loc-city').value.trim() || state.city.name;
-  document.getElementById('active-city-label').textContent = `${cityName}, IN`;
-  renderDoctors(state.selected.concern || 'all');
-  switchView('directory');
+
+function setDateTimeChips(){
+  const dWrap = document.getElementById('date-scroll');
+  const tWrap = document.getElementById('time-grid');
+  const dates = Array.from({length:7}, (_,i)=>{
+    const dt = new Date();
+    dt.setDate(dt.getDate()+i+1);
+    return dt;
+  });
+  dWrap.innerHTML = dates.map((d,i)=>{
+    const label = d.toLocaleDateString('en-IN',{weekday:'short', day:'numeric', month:'short'});
+    return `<div class="city-chip ${i===0?'active':''}" onclick="pickDate('${d.toISOString()}')"><strong>${label}</strong><span>${i===0?'Tomorrow':'Available'}</span></div>`;
+  }).join('');
+  const times = ['09:00 AM','10:30 AM','12:00 PM','02:00 PM','04:00 PM','06:00 PM'];
+  tWrap.innerHTML = times.map((t,i)=>`<div class="city-chip ${i===0?'active':''}" onclick="pickTime('${t}')"><strong>${t}</strong><span>Slots open</span></div>`).join('');
+  state.selectedDate = dates[0].toISOString();
+  state.selectedTime = times[0];
 }
-function selectPay(el){
-  document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('sel'));
-  el.classList.add('sel');
-  state.selectedPay = el.querySelector('.pay-name').textContent;
-}
+
+function pickDate(val){ state.selectedDate = val; document.querySelectorAll('#date-scroll .city-chip').forEach(x=>x.classList.remove('active')); event.currentTarget.classList.add('active'); }
+function pickTime(val){ state.selectedTime = val; document.querySelectorAll('#time-grid .city-chip').forEach(x=>x.classList.remove('active')); event.currentTarget.classList.add('active'); }
+
 function openCheckout(id){
   const d = doctors.find(x=>x.id===id);
+  if(!d) return;
   state.selectedDoc = d;
+  switchView('checkout');
   document.getElementById('co-img').src = d.img;
   document.getElementById('co-name').textContent = d.name;
-  document.getElementById('co-spec').textContent = `${d.spec} · ${d.deg}`;
-  document.getElementById('co-hosp').textContent = `${d.hospital} · ${d.city}`;
+  document.getElementById('co-spec').textContent = `${d.spec} • ★ ${d.rating}`;
+  document.getElementById('co-hosp').textContent = `${d.deg} · ${d.exp}`;
   document.getElementById('hospital-address').textContent = d.address;
-  document.getElementById('hospital-distance').textContent = `Approx. 2.4 km from ${state.city.name}`;
-  document.getElementById('hospital-map-link').href = `https://www.google.com/maps/search/${encodeURIComponent(d.hospital + ', ' + d.city)}`;
+  document.getElementById('hospital-distance').textContent = `2.4 km from ${state.city.name}`;
+  document.getElementById('hospital-map-link').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.address)}`;
   document.getElementById('hospital-call-link').href = `tel:${d.phone}`;
   document.getElementById('rc-fee').textContent = `₹${d.fee}`;
   const gst = Math.round((d.fee + 49) * 0.18);
   document.getElementById('rc-gst').textContent = `₹${gst}`;
   document.getElementById('rc-total').textContent = `₹${d.fee + 49 + gst}`;
   document.getElementById('pay-btn-amt').textContent = `₹${d.fee + 49 + gst}`;
-  renderDateTime();
-  switchView('checkout');
-}
-function renderDateTime(){
-  const ds = document.getElementById('date-scroll');
-  const ts = document.getElementById('time-grid');
-  const days = [...Array(7)].map((_,i)=>{
-    const dt = new Date(); dt.setDate(dt.getDate()+i);
-    return dt;
-  });
-  ds.innerHTML = days.map((d,i)=>{
-    const day = d.toLocaleDateString('en-IN',{weekday:'short'});
-    const num = d.getDate();
-    return `<div class="city-chip ${i===0?'active':''}" onclick="pickDate('${d.toISOString()}')"><strong>${day}</strong><span>${num}</span></div>`;
-  }).join('');
-  const times = ['09:00 AM','10:30 AM','12:00 PM','02:00 PM','04:00 PM','06:00 PM'];
-  ts.innerHTML = times.map((t,i)=>`<div class="city-chip ${i===0?'active':''}" onclick="pickTime('${t}')"><strong>${t}</strong></div>`).join('');
-  state.selectedDate = days[0].toISOString();
-  state.selectedTime = times[0];
-}
-function pickDate(dt){ state.selectedDate = dt; document.querySelectorAll('#date-scroll .city-chip').forEach(x=>x.classList.remove('active')); event.currentTarget.classList.add('active'); }
-function pickTime(t){ state.selectedTime = t; document.querySelectorAll('#time-grid .city-chip').forEach(x=>x.classList.remove('active')); event.currentTarget.classList.add('active'); }
-function processPayment(){
-  const o = document.getElementById('processing-overlay');
-  o.classList.add('show');
-  setTimeout(()=>{
-    o.classList.remove('show');
-    document.getElementById('conf-id').textContent = 'APPT-' + Math.floor(100000 + Math.random()*900000);
-    document.getElementById('conf-doc').textContent = state.selectedDoc.name;
-    const dt = new Date(state.selectedDate).toLocaleDateString('en-IN',{weekday:'short', day:'numeric', month:'short', year:'numeric'});
-    document.getElementById('conf-dt').textContent = `${dt} · ${state.selectedTime}`;
-    document.getElementById('conf-hosp').textContent = state.selectedDoc.hospital;
-    document.getElementById('conf-loc').textContent = `${state.city.name}, ${state.city.state}`;
-    switchView('success');
-  }, 1800);
-}
-function revealOnScroll(){
-  const obs = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show') });
-  }, {threshold:.12});
-  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  setDateTimeChips();
 }
 
+function selectPay(el){
+  document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  state.selectedPay = el.querySelector('.pay-name').textContent;
+}
+
+function processPayment(){
+  const ov = document.getElementById('processing-overlay');
+  ov.classList.add('show');
+  setTimeout(()=>{
+    ov.classList.remove('show');
+    const id = 'AP' + Math.random().toString(36).slice(2,8).toUpperCase();
+    document.getElementById('conf-id').textContent = id;
+    document.getElementById('conf-doc').textContent = state.selectedDoc?.name || '';
+    document.getElementById('conf-dt').textContent = `${new Date(state.selectedDate||Date.now()).toLocaleDateString('en-IN')} • ${state.selectedTime || ''}`;
+    document.getElementById('conf-hosp').textContent = state.selectedDoc?.hospital || '';
+    document.getElementById('conf-loc').textContent = `${state.city.name}, ${state.city.state}`;
+    switchView('success');
+    const msg = encodeURIComponent(`Booking confirmed for ${state.selectedDoc?.name || 'doctor'} on ${document.getElementById('conf-dt').textContent}`);
+    window._whatsappLink = `https://wa.me/${String(state.selectedDoc?.phone || '').replace(/D/g,'')}?text=${msg}`;
+  }, 1500);
+}
+
+function showTriageResults(){
+  const key = state.selected.concern || 'general';
+  const filtered = key === 'general' ? doctors : doctors.filter(d => d.key === key);
+  renderDoctors(filtered.length ? filtered : doctors);
+  switchView('directory');
+}
+
+document.getElementById('loc-city').addEventListener('input', ()=>{
+  document.getElementById('ts5-next').disabled = !document.getElementById('loc-city').value.trim();
+});
+
 renderSpecialties();
-renderDoctors('all');
+renderDoctors(doctors);
 renderCities();
-revealOnScroll();
-document.getElementById('loc-city').value = state.city.name;
-document.getElementById('active-city-label').textContent = `${state.city.name}, ${state.city.state}`;
-setTimeout(initMap, 400);
-renderDateTime();
+renderTriageCities();
+setCity(cities[0]);
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
