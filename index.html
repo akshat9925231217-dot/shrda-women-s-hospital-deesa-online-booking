@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>DocMatch Pro – Find Your Doctor</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<style>
+:root{
+  --bg:#F5F8FF;
+  --surface:#FFFFFF;
+  --surface-2:#F0F5FF;
+  --surface-3:#EAF2FF;
+  --text:#12213A;
+  --muted:#60708A;
+  --line:#DCE6F5;
+  --primary:#1C7CFF;
+  --primary-2:#0D63E3;
+  --teal:#00A88A;
+  --teal-soft:rgba(0,168,138,0.10);
+  --warn:#F59E0B;
+  --danger:#E5484D;
+  --success:#12B76A;
+  --shadow:0 10px 30px rgba(16,35,75,0.08);
+  --shadow-2:0 18px 40px rgba(16,35,75,0.12);
+  --radius:22px;
+  --radius-sm:16px;
+  --font-display:'Fraunces',serif;
+  --font-body:'Plus Jakarta Sans',sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  background:linear-gradient(180deg,#F7FAFF 0%, #EEF5FF 100%);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(28,124,255,0.10), transparent 28%),
+    radial-gradient(circle at 85% 0%, rgba(0,168,138,0.08), transparent 25%),
+    radial-gradient(circle at 50% 100%, rgba(245,158,11,0.06), transparent 30%);
+  pointer-events:none;
+  z-index:0;
+}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit}
+.view{display:none;position:relative;z-index:1;padding-bottom:92px}
+.view.active{display:block;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(28,124,255,.18)}50%{box-shadow:0 0 0 14px rgba(28,124,255,0)}}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+@keyframes pop{0%{transform:scale(.98)}100%{transform:scale(1)}}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease, transform .55s ease}
+.reveal.show{opacity:1;transform:translateY(0)}
+
+.navbar{
+  position:sticky; top:0; z-index:600;
+  background:rgba(245,248,255,.85);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(220,230,245,.9);
+  padding:14px 18px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.logo{
+  font-family:var(--font-display);
+  font-size:1.45rem;
+  font-weight:900;
+  letter-spacing:-.5px;
+  color:var(--primary-2);
+}
+.logo span{color:var(--teal)}
+.top-actions{display:flex;gap:10px;align-items:center}
+.loc-badge,.action-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--text);
+  font-size:.8rem;
+  font-weight:700;
+  padding:9px 14px;
+  border-radius:999px;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+}
+.loc-dot{width:8px;height:8px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite}
+.action-pill{color:var(--primary-2)}
+.container{padding:0 18px}
+.hero{
+  padding:18px 0 6px;
+}
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#FFFFFF 0%, #F2F7FF 100%);
+  border:1px solid var(--line);
+  border-radius:28px;
+  box-shadow:var(--shadow);
+  padding:22px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  color:var(--primary-2);
+  font-size:.72rem;
+  font-weight:800;
+  padding:6px 12px;
+  border-radius:999px;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+  margin-bottom:14px;
+}
+.hero h1{
+  font-family:var(--font-display);
+  font-size:clamp(2rem,7vw,3rem);
+  line-height:1.08;
+  letter-spacing:-.7px;
+  margin-bottom:10px;
+}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero p{
+  color:var(--muted);
+  line-height:1.65;
+  font-size:.95rem;
+  margin-bottom:18px;
+}
+.search-wrap{position:relative}
+.search-bar{
+  width:100%;
+  background:var(--surface);
+  border:1.5px solid var(--line);
+  border-radius:18px;
+  padding:15px 48px 15px 48px;
+  color:var(--text);
+  outline:none;
+  box-shadow:var(--shadow);
+}
+.search-bar:focus{
+  border-color:rgba(28,124,255,.45);
+  box-shadow:0 0 0 4px rgba(28,124,255,.08), var(--shadow);
+}
+.search-icon,.search-mic{
+  position:absolute;top:50%;transform:translateY(-50%);
+  font-size:1rem
+}
+.search-icon{left:16px}
+.search-mic{right:16px;color:var(--primary-2);cursor:pointer}
+.hero-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:16px;
+}
+.hero-mini{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px 10px;
+  text-align:center;
+  box-shadow:var(--shadow);
+}
+.hero-mini strong{display:block;color:var(--primary-2);font-size:1.05rem}
+.hero-mini span{display:block;color:var(--muted);font-size:.7rem;margin-top:2px}
+
+.sec-header{
+  padding:22px 0 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:10px;
+}
+.sec-lbl{
+  font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:1.4px;color:var(--teal);margin-bottom:6px
+}
+.sec-title{
+  font-family:var(--font-display);
+  font-size:1.28rem;
+  font-weight:700;
+}
+.see-all{font-size:.82rem;font-weight:800;color:var(--primary-2);cursor:pointer}
+
+.spec-scroll,.doc-scroll,.date-scroll,.city-scroll{
+  display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;padding:6px 0 10px
+}
+.spec-scroll::-webkit-scrollbar,.doc-scroll::-webkit-scrollbar,.date-scroll::-webkit-scrollbar,.city-scroll::-webkit-scrollbar{display:none}
+
+.spec-chip{
+  flex-shrink:0;
+  min-width:86px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px 12px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  transition:.2s ease;
+}
+.spec-chip:hover,.spec-chip.active,.city-chip.active{
+  border-color:rgba(28,124,255,.35);
+  transform:translateY(-2px);
+  background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%);
+}
+.spec-emoji{font-size:1.6rem;display:block;margin-bottom:6px}
+.spec-name{font-size:.74rem;font-weight:700;color:var(--muted)}
+
+.card-row{
+  display:flex;gap:14px;overflow-x:auto;padding-bottom:10px
+}
+.doc-card{
+  flex-shrink:0;
+  width:220px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+  transition:.2s ease;
+}
+.doc-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-2)}
+.doc-card-img{
+  width:100%;height:132px;object-fit:cover;display:block;background:var(--surface-3)
+}
+.doc-card-body{padding:14px}
+.doc-card-name{font-weight:800;font-size:.95rem;margin-bottom:3px}
+.doc-card-spec{font-size:.76rem;font-weight:800;color:var(--primary-2);margin-bottom:5px}
+.doc-card-meta{font-size:.74rem;color:var(--muted);line-height:1.5}
+.doc-card-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 14px 14px;
+}
+.fee{font-weight:900;color:var(--text)}
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:.66rem;
+  font-weight:800;
+}
+.badge.ok{background:rgba(18,183,106,.12);color:var(--success)}
+.badge.no{background:rgba(229,72,77,.10);color:var(--danger)}
+
+.promo-banner{
+  border-radius:26px;
+  overflow:hidden;
+  position:relative;
+  height:148px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--line);
+}
+.promo-img{width:100%;height:100%;object-fit:cover;display:block}
+.promo-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(255,255,255,.95) 0%, rgba(255,255,255,.82) 42%, rgba(255,255,255,0) 100%);
+  display:flex;flex-direction:column;justify-content:center;padding:20px
+}
+.promo-tag{font-size:.66rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:var(--warn);margin-bottom:5px}
+.promo-title{font-family:var(--font-display);font-size:1.2rem;font-weight:700;margin-bottom:5px}
+.promo-cta{font-size:.78rem;color:var(--primary-2);font-weight:800}
+
+.doc-list{display:flex;flex-direction:column;gap:14px}
+.doc-full-card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+}
+.doc-full-top{display:flex}
+.doc-full-img{
+  width:114px;height:114px;object-fit:cover;flex-shrink:0;background:var(--surface-3)
+}
+.doc-full-info{padding:14px;flex:1}
+.verified-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(18,183,106,.12);
+  color:var(--success);
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:.65rem;
+  font-weight:900;
+  margin-bottom:6px;
+}
+.doc-full-name{font-size:1rem;font-weight:900;margin-bottom:2px}
+.doc-full-deg{font-size:.76rem;color:var(--primary-2);font-weight:800;margin-bottom:2px}
+.doc-full-spec{font-size:.8rem;color:var(--muted);line-height:1.45}
+.doc-full-exp{font-size:.74rem;color:var(--warn);font-weight:800;margin-top:5px}
+.doc-full-bottom{
+  border-top:1px solid var(--line);
+  padding:12px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px
+}
+.doc-hospital{font-size:.76rem;color:var(--muted);line-height:1.35}
+.doc-price{font-family:var(--font-display);font-size:1.08rem;font-weight:800;color:var(--text)}
+.btn-book,.btn-next,.btn-pay{
+  border:none;cursor:pointer;
+  border-radius:999px;
+  font-weight:800;
+  transition:.2s ease;
+}
+.btn-book{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  color:#fff;padding:10px 16px;font-size:.82rem;
+  box-shadow:0 8px 18px rgba(28,124,255,.22)
+}
+.btn-book:hover,.btn-next:hover,.btn-pay:hover{transform:translateY(-1px)}
+.btn-book:active,.btn-next:active,.btn-pay:active{transform:scale(.98)}
+
+.section-spacer{height:4px}
+
+.bot-nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:700;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(18px);
+  border-top:1px solid rgba(220,230,245,.95);
+  display:flex;
+  padding:8px 0 6px;
+}
+.nav-tab{
+  flex:1;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  color:var(--muted);
+  font-size:.65rem;
+  font-weight:800;
+  cursor:pointer;
+}
+.nav-tab.active{color:var(--primary-2)}
+.nav-tab .tab-icon{font-size:1.25rem}
+
+.triage-wrap,.checkout-wrap,.city-wrap{padding:18px}
+.panel{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.triage-header{
+  margin-bottom:16px;
+  position:relative;
+  overflow:hidden;
+}
+.step-counter{font-size:.72rem;color:var(--muted);font-weight:800;margin-bottom:5px}
+.triage-q{font-family:var(--font-display);font-size:1.18rem;font-weight:700;line-height:1.3}
+.triage-hint{font-size:.84rem;color:var(--muted);margin-top:6px;line-height:1.5}
+.progress-bar-wrap{background:var(--surface-3);height:6px;border-radius:999px;margin-top:14px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--teal));transition:width .35s ease}
+.triage-step{display:none}
+.triage-step.active{display:block;animation:fadeUp .3s ease}
+.opt-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px
+}
+.opt-item{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;padding:14px 12px;
+  cursor:pointer;text-align:center;box-shadow:var(--shadow);transition:.2s ease
+}
+.opt-item:hover,.opt-item.sel{border-color:rgba(28,124,255,.35);background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%)}
+.opt-emoji{font-size:1.8rem;display:block;margin-bottom:8px}
+.opt-label{font-size:.84rem;font-weight:800}
+.opt-sub{font-size:.7rem;color:var(--muted);margin-top:3px;line-height:1.35}
+.opt-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.opt-list-item{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;padding:14px 15px;
+  cursor:pointer;display:flex;align-items:center;gap:12px;
+  box-shadow:var(--shadow)
+}
+.radio{
+  width:20px;height:20px;border-radius:50%;
+  border:2px solid #B6C6DD;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center
+}
+.opt-list-item.sel{border-color:rgba(28,124,255,.35);background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%)}
+.opt-list-item.sel .radio{border-color:var(--primary);background:var(--primary)}
+.opt-list-item.sel .radio::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%}
+.opt-list-label{font-size:.9rem;font-weight:700}
+.triage-nav{display:flex;gap:10px}
+.btn-back{
+  background:#EEF4FF;border:1px solid var(--line);color:var(--primary-2);
+  border-radius:999px;padding:13px 16px;font-weight:800;cursor:pointer
+}
+.btn-next{
+  flex:1;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  color:#fff;padding:14px 16px;
+  box-shadow:0 8px 20px rgba(28,124,255,.24)
+}
+.triage-input{
+  width:100%;
+  background:var(--surface);
+  border:1.5px solid var(--line);
+  border-radius:16px;
+  padding:14px 15px;
+  color:var(--text);
+  outline:none;
+  box-shadow:var(--shadow);
+}
+.triage-input:focus{border-color:rgba(28,124,255,.45);box-shadow:0 0 0 4px rgba(28,124,255,.08), var(--shadow)}
+
+.city-chip{
+  flex-shrink:0;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px 14px;
+  min-width:112px;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+}
+.city-chip strong{display:block;font-size:.86rem}
+.city-chip span{display:block;font-size:.7rem;color:var(--muted);margin-top:2px}
+.map-wrap{
+  border:1px solid var(--line);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  margin-top:12px;
+}
+#city-map{width:100%;height:280px}
+.map-note{
+  font-size:.78rem;color:var(--muted);margin-top:10px;line-height:1.5
+}
+.small-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.location-card{
+  margin-top:14px;
+  background:linear-gradient(180deg,#FFFFFF 0%, #F4F8FF 100%);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:16px;
+}
+.location-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.location-top strong{display:block;font-size:.95rem}
+.location-top span{display:block;color:var(--muted);font-size:.78rem;margin-top:3px;line-height:1.45}
+.addr{font-size:.82rem;color:var(--text);line-height:1.55;margin-top:10px}
+.link-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.link-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#EEF4FF;border:1px solid var(--line);
+  color:var(--primary-2);
+  border-radius:999px;
+  padding:10px 14px;
+  font-size:.78rem;
+  font-weight:800;
+}
+.receipt-card{
+  margin-top:16px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px;
+  box-shadow:var(--shadow)
+}
+.receipt-title{
+  font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px
+}
+.receipt-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:.88rem}
+.receipt-label{color:var(--muted)}
+.receipt-val{font-weight:800}
+.receipt-divider{height:1px;background:var(--line);border:none;margin:12px 0}
+.receipt-total{display:flex;justify-content:space-between;align-items:center}
+.receipt-total-label{font-size:.9rem;font-weight:900}
+.receipt-total-val{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--primary-2)}
+.payment-methods{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.pay-method{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;padding:14px;
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer
+}
+.pay-method.sel{border-color:rgba(28,124,255,.35);background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%)}
+.pay-icon{font-size:1.4rem}
+.pay-name{font-weight:800;font-size:.92rem}
+.pay-desc{font-size:.72rem;color:var(--muted);margin-top:2px}
+.pay-radio{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid #B6C6DD}
+.pay-method.sel .pay-radio{border-color:var(--primary);background:var(--primary)}
+.btn-pay{
+  width:100%;
+  margin-top:16px;
+  background:linear-gradient(135deg,var(--teal),#079B80);
+  color:#fff;
+  padding:17px 16px;
+  box-shadow:0 10px 22px rgba(0,168,138,.20)
+}
+.processing-overlay{
+  display:none;position:fixed;inset:0;z-index:950;
+  background:rgba(245,248,255,.92);
+  backdrop-filter:blur(10px);
+  flex-direction:column;align-items:center;justify-content:center;gap:20px
+}
+.processing-overlay.show{display:flex}
+.spinner{
+  width:56px;height:56px;border-radius:50%;
+  border:3px solid rgba(28,124,255,.16);
+  border-top-color:var(--primary);
+  animation:spin .85s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.processing-text{font-family:var(--font-display);font-size:1.35rem;font-weight:700}
+.processing-sub{color:var(--muted);font-size:.85rem;text-align:center}
+.success-wrap{
+  padding:38px 18px;
+  display:flex;flex-direction:column;align-items:center;text-align:center
+}
+.success-circle{
+  width:100px;height:100px;border-radius:50%;
+  background:rgba(18,183,106,.12);
+  border:2px solid var(--success);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.4rem;margin-bottom:20px;
+  animation:pulse 2s infinite
+}
+.success-title{font-family:var(--font-display);font-size:2rem;font-weight:900;margin-bottom:10px}
+.success-sub{font-size:.93rem;color:var(--muted);line-height:1.7;max-width:320px;margin-bottom:22px}
+.confirmation-card{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px;
+  box-shadow:var(--shadow)
+}
+.conf-row{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;font-size:.86rem}
+.conf-label{color:var(--muted)}
+.conf-val{font-weight:800}
+.conf-id{font-family:var(--font-display);font-size:1.08rem;color:var(--primary-2);font-weight:800}
+.skeleton{
+  background:linear-gradient(90deg,#F1F5FF 25%, #E8F0FF 50%, #F1F5FF 75%);
+  background-size:400px 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:12px
+}
+#dir-filter-scroll,#featured-scroll{padding-top:6px}
+#dir-list{padding-top:10px}
+#view-directory .sec-header,#view-home .sec-header{padding-top:18px}
+#map-panel{padding:0}
+@media(max-width:420px){
+  .hero-grid{grid-template-columns:1fr; }
+  .opt-grid{grid-template-columns:1fr}
+  .small-inputs{grid-template-columns:1fr}
+  .doc-card{width:190px}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">Doc<span>Match</span> Pro</div>
+  <div class="top-actions">
+    <div class="loc-badge" onclick="switchView('cities')">
+      <span class="loc-dot"></span><span id="active-city-label">Mumbai, IN</span>
+    </div>
+    <div class="action-pill" onclick="switchView('triage')">AI Triage</div>
+  </div>
+</nav>
+
+<div class="processing-overlay" id="processing-overlay">
+  <div class="spinner"></div>
+  <div class="processing-text">Processing Payment…</div>
+  <div class="processing-sub">Please do not close this window</div>
+</div>
+
+<div id="view-home" class="view active">
+  <div class="container">
+    <section class="hero reveal">
+      <div class="hero-card">
+        <div class="hero-badge">🩺 Smart Doctor Matching</div>
+        <h1>Find the <em>right</em> specialist, instantly</h1>
+        <p>Search symptoms, choose a city on the map, and book a verified doctor in minutes.</p>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-bar" type="text" placeholder="Search symptoms, conditions, doctors…" onfocus="switchView('triage')">
+          <span class="search-mic">🎤</span>
+        </div>
+        <div class="hero-grid">
+          <div class="hero-mini"><strong>2.4K+</strong><span>Doctors</span></div>
+          <div class="hero-mini"><strong>52</strong><span>Cities</span></div>
+          <div class="hero-mini"><strong>4.9★</strong><span>Rating</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <div class="sec-header">
+        <div>
+          <div class="sec-lbl">Browse by Category</div>
+          <div class="sec-title">Specialties</div>
+        </div>
+        <div class="see-all" onclick="switchView('triage')">AI Triage →</div>
+      </div>
+      <div class="spec-scroll" id="spec-scroll"></div>
+    </section>
+
+    <section class="reveal">
+      <div class="sec-header">
+        <div>
+          <div class="sec-lbl">Featured</div>
+          <div class="sec-title">Top Doctors</div>
+        </div>
+        <div class="see-all" onclick="switchView('directory')">See all →</div>
+      </div>
+      <div class="card-row" id="featured-scroll"></div>
+    </section>
+
+    <section class="reveal">
+      <div class="promo-banner">
+        <img class="promo-img" src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=1200&q=80" alt="Health checkup" onerror="this.style.display='none'">
+        <div class="promo-overlay">
+          <div class="promo-tag">Limited Time</div>
+          <div class="promo-title">Free First Consultation</div>
+          <div class="promo-cta">For new users · Use code NEW100 →</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reveal">
+      <div class="sec-header">
+        <div>
+          <div class="sec-lbl">Near You</div>
+          <div class="sec-title">All Doctors</div>
+        </div>
+      </div>
+      <div class="doc-list" id="home-doc-list"></div>
+    </section>
+  </div>
+</div>
+
+<div id="view-triage" class="view">
+  <div class="triage-wrap">
+    <div class="panel triage-header reveal">
+      <div class="step-counter" id="step-counter">Step 1 of 5</div>
+      <div class="triage-q" id="triage-q">What's your main health concern?</div>
+      <div class="triage-hint" id="triage-hint">Select the category that best matches your symptoms.</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:20%"></div></div>
+    </div>
+
+    <div class="triage-step active reveal" id="ts1">
+      <div class="opt-grid">
+        <div class="opt-item" onclick="selectOpt(this,'concern','cardio')"><span class="opt-emoji">❤️</span><div class="opt-label">Heart & Blood</div><div class="opt-sub">Chest pain, BP, palpitations</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'concern','ortho')"><span class="opt-emoji">🦴</span><div class="opt-label">Bones & Joints</div><div class="opt-sub">Pain, spine, fractures</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'concern','derma')"><span class="opt-emoji">🌿</span><div class="opt-label">Skin & Hair</div><div class="opt-sub">Acne, rash, hair loss</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'concern','neuro')"><span class="opt-emoji">🧠</span><div class="opt-label">Neuro & Brain</div><div class="opt-sub">Migraine, memory, vertigo</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'concern','pedia')"><span class="opt-emoji">👶</span><div class="opt-label">Child Health</div><div class="opt-sub">Fever, growth, vaccines</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'concern','general')"><span class="opt-emoji">🩺</span><div class="opt-label">General / Other</div><div class="opt-sub">Not sure yet</div></div>
+      </div>
+      <div class="triage-nav">
+        <button class="btn-back" onclick="switchView('home')">✕ Cancel</button>
+        <button class="btn-next" id="ts1-next" onclick="goStep(2)" disabled>Next →</button>
+      </div>
+    </div>
+
+    <div class="triage-step reveal" id="ts2">
+      <div class="opt-list">
+        <div class="opt-list-item" onclick="selectList(this,'duration','today')"><div class="radio"></div><span class="opt-list-label">⚡ Just started today</span></div>
+        <div class="opt-list-item" onclick="selectList(this,'duration','days')"><div class="radio"></div><span class="opt-list-label">📅 A few days (2–6 days)</span></div>
+        <div class="opt-list-item" onclick="selectList(this,'duration','weeks')"><div class="radio"></div><span class="opt-list-label">🗓️ 1–4 weeks</span></div>
+        <div class="opt-list-item" onclick="selectList(this,'duration','months')"><div class="radio"></div><span class="opt-list-label">🕐 More than a month</span></div>
+      </div>
+      <div class="triage-nav">
+        <button class="btn-back" onclick="goStep(1)">← Back</button>
+        <button class="btn-next" id="ts2-next" onclick="goStep(3)" disabled>Next →</button>
+      </div>
+    </div>
+
+    <div class="triage-step reveal" id="ts3">
+      <div class="opt-grid">
+        <div class="opt-item" onclick="selectOpt(this,'severity','mild')"><span class="opt-emoji">😌</span><div class="opt-label">Mild</div><div class="opt-sub">Minor discomfort</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'severity','moderate')"><span class="opt-emoji">😐</span><div class="opt-label">Moderate</div><div class="opt-sub">Affects daily life</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'severity','severe')"><span class="opt-emoji">😟</span><div class="opt-label">Severe</div><div class="opt-sub">Hard to function</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'severity','emergency')"><span class="opt-emoji">🚨</span><div class="opt-label">Emergency</div><div class="opt-sub">Need help now</div></div>
+      </div>
+      <div class="triage-nav">
+        <button class="btn-back" onclick="goStep(2)">← Back</button>
+        <button class="btn-next" id="ts3-next" onclick="goStep(4)" disabled>Next →</button>
+      </div>
+    </div>
+
+    <div class="triage-step reveal" id="ts4">
+      <div class="opt-grid">
+        <div class="opt-item" onclick="selectOpt(this,'consult','inperson')"><span class="opt-emoji">🏥</span><div class="opt-label">In-Person</div><div class="opt-sub">Visit the clinic</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'consult','video')"><span class="opt-emoji">💻</span><div class="opt-label">Video Call</div><div class="opt-sub">Consult from home</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'consult','home')"><span class="opt-emoji">🏠</span><div class="opt-label">Home Visit</div><div class="opt-sub">Doctor visits you</div></div>
+        <div class="opt-item" onclick="selectOpt(this,'consult','any')"><span class="opt-emoji">🤷</span><div class="opt-label">No Preference</div><div class="opt-sub">Any option works</div></div>
+      </div>
+      <div class="triage-nav">
+        <button class="btn-back" onclick="goStep(3)">← Back</button>
+        <button class="btn-next" id="ts4-next" onclick="goStep(5)" disabled>Next →</button>
+      </div>
+    </div>
+
+    <div class="triage-step reveal" id="ts5">
+      <div class="panel">
+        <div class="small-inputs">
+          <input class="triage-input" type="text" id="loc-city" placeholder="Your city">
+          <input class="triage-input" type="text" id="loc-pin" placeholder="PIN code (optional)">
+        </div>
+        <div class="city-scroll" id="triage-city-scroll" style="margin-top:12px"></div>
+        <div class="triage-nav" style="margin-top:12px">
+          <button class="btn-back" onclick="goStep(4)">← Back</button>
+          <button class="btn-next" id="ts5-next" onclick="showTriageResults()" disabled>🔍 Find Doctors</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="view-cities" class="view">
+  <div class="city-wrap">
+    <div class="panel reveal">
+      <div class="sec-lbl">Select City</div>
+      <div class="sec-title">Choose on map or list</div>
+      <p style="color:var(--muted);font-size:.9rem;line-height:1.6;margin-top:8px">Tap a city marker on the map, search a city name, or pick from the quick list below.</p>
+      <div class="city-scroll" id="city-scroll"></div>
+      <div class="map-wrap">
+        <div id="city-map"></div>
+      </div>
+      <div class="map-note">Map is centered on India. City markers show supported locations. Selecting a city updates the active location across the app.</div>
+    </div>
+  </div>
+</div>
+
+<div id="view-directory" class="view">
+  <div class="container">
+    <div class="sec-header reveal" style="padding-top:18px">
+      <div>
+        <div class="sec-lbl" id="dir-lbl">All Specialists</div>
+        <div class="sec-title" id="dir-title">2,400+ Doctors</div>
+      </div>
+      <div class="see-all" onclick="switchView('triage')">Re-filter ⚙️</div>
+    </div>
+    <div class="spec-scroll reveal" id="dir-filter-scroll"></div>
+    <div class="doc-list reveal" id="dir-list"></div>
+  </div>
+</div>
+
+<div id="view-checkout" class="view">
+  <div class="checkout-wrap">
+    <div class="panel reveal">
+      <div class="checkout-hero">
+        <img id="co-img" style="width:100%;height:160px;object-fit:cover;border-radius:20px" alt="">
+        <div style="padding-top:14px">
+          <div class="doc-card-name" id="co-name"></div>
+          <div class="doc-card-spec" id="co-spec"></div>
+          <div class="doc-card-meta" id="co-hosp"></div>
+        </div>
+      </div>
+      <div class="location-card">
+        <div class="location-top">
+          <div>
+            <strong>Hospital Location</strong>
+            <span id="hospital-distance">2.4 km from your selected city</span>
+          </div>
+          <div class="badge ok">Open Today</div>
+        </div>
+        <div class="addr" id="hospital-address"></div>
+        <div class="link-row">
+          <a class="link-btn" id="hospital-map-link" href="#" target="_blank">🗺️ Open in Maps</a>
+          <a class="link-btn" id="hospital-call-link" href="#">📞 Call Hospital</a>
+        </div>
+      </div>
+
+      <div class="sec-lbl" style="margin-top:18px">Select Date</div>
+      <div class="date-scroll" id="date-scroll"></div>
+
+      <div class="sec-lbl" style="margin-top:8px">Select Time</div>
+      <div class="date-scroll" id="time-grid"></div>
+
+      <div class="receipt-card">
+        <div class="receipt-title">Booking Summary</div>
+        <div class="receipt-row"><span class="receipt-label">Consultation Fee</span><span class="receipt-val" id="rc-fee"></span></div>
+        <div class="receipt-row"><span class="receipt-label">Platform Fee</span><span class="receipt-val">₹49</span></div>
+        <div class="receipt-row"><span class="receipt-label">GST (18%)</span><span class="receipt-val" id="rc-gst"></span></div>
+        <hr class="receipt-divider">
+        <div class="receipt-total"><span class="receipt-total-label">Total Payable</span><span class="receipt-total-val" id="rc-total"></span></div>
+      </div>
+
+      <div class="sec-lbl" style="margin-top:18px">Payment Method</div>
+      <div class="payment-methods">
+        <div class="pay-method sel" onclick="selectPay(this)"><span class="pay-icon">📱</span><div><div class="pay-name">UPI / PhonePe / GPay</div><div class="pay-desc">Instant payment via any UPI app</div></div><div class="pay-radio"></div></div>
+        <div class="pay-method" onclick="selectPay(this)"><span class="pay-icon">💳</span><div><div class="pay-name">Credit / Debit Card</div><div class="pay-desc">Visa, Mastercard, Rupay</div></div><div class="pay-radio"></div></div>
+        <div class="pay-method" onclick="selectPay(this)"><span class="pay-icon">🏦</span><div><div class="pay-name">Net Banking</div><div class="pay-desc">All major banks supported</div></div><div class="pay-radio"></div></div>
+        <div class="pay-method" onclick="selectPay(this)"><span class="pay-icon">💰</span><div><div class="pay-name">Pay at Clinic</div><div class="pay-desc">Pay when you arrive</div></div><div class="pay-radio"></div></div>
+      </div>
+
+      <button class="btn-pay" onclick="processPayment()">🔒 Confirm & Pay <span id="pay-btn-amt"></span></button>
+      <p style="text-align:center;font-size:.72rem;color:var(--muted);margin-top:10px">Secured by Razorpay · PCI-DSS compliant</p>
+    </div>
+  </div>
+</div>
+
+<div id="view-success" class="view">
+  <div class="success-wrap">
+    <div class="success-circle">✅</div>
+    <div class="success-title">Booking Confirmed!</div>
+    <p class="success-sub">Your appointment has been booked successfully. Confirmation has been sent to your WhatsApp and email.</p>
+    <div class="confirmation-card">
+      <div class="conf-row"><span class="conf-label">Appointment ID</span><span class="conf-id" id="conf-id"></span></div>
+      <div class="conf-row"><span class="conf-label">Doctor</span><span class="conf-val" id="conf-doc"></span></div>
+      <div class="conf-row"><span class="conf-label">Date & Time</span><span class="conf-val" id="conf-dt"></span></div>
+      <div class="conf-row"><span class="conf-label">Hospital</span><span class="conf-val" id="conf-hosp"></span></div>
+      <div class="conf-row"><span class="conf-label">Location</span><span class="conf-val" id="conf-loc"></span></div>
+    </div>
+  </div>
+</div>
+
+<div class="bot-nav">
+  <div class="nav-tab active" onclick="switchView('home')"><div class="tab-icon">🏠</div>Home</div>
+  <div class="nav-tab" onclick="switchView('cities')"><div class="tab-icon">🗺️</div>Map</div>
+  <div class="nav-tab" onclick="switchView('directory')"><div class="tab-icon">👨‍⚕️</div>Doctors</div>
+  <div class="nav-tab" onclick="switchView('triage')"><div class="tab-icon">🧠</div>Triage</div>
+</div>
+
+<script>
+const specialties = [
+  {id:'all', name:'All', emoji:'🩺'},
+  {id:'cardio', name:'Cardiology', emoji:'❤️'},
+  {id:'ortho', name:'Orthopedics', emoji:'🦴'},
+  {id:'derma', name:'Dermatology', emoji:'🌿'},
+  {id:'neuro', name:'Neurology', emoji:'🧠'},
+  {id:'pedia', name:'Pediatrics', emoji:'👶'},
+  {id:'gynae', name:'Gynecology', emoji:'🌸'}
+];
+
+const cities = [
+  {name:'Mumbai', state:'Maharashtra', lat:19.0760, lng:72.8777, support:32},
+  {name:'Delhi', state:'NCT', lat:28.6139, lng:77.2090, support:40},
+  {name:'Bengaluru', state:'Karnataka', lat:12.9716, lng:77.5946, support:28},
+  {name:'Chennai', state:'Tamil Nadu', lat:13.0827, lng:80.2707, support:24},
+  {name:'Hyderabad', state:'Telangana', lat:17.3850, lng:78.4867, support:26},
+  {name:'Kolkata', state:'West Bengal', lat:22.5726, lng:88.3639, support:22},
+  {name:'Ahmedabad', state:'Gujarat', lat:23.0225, lng:72.5714, support:18},
+  {name:'Surat', state:'Gujarat', lat:21.1702, lng:72.8311, support:16},
+  {name:'Pune', state:'Maharashtra', lat:18.5204, lng:73.8567, support:21},
+  {name:'Jaipur', state:'Rajasthan', lat:26.9124, lng:75.7873, support:15},
+  {name:'Lucknow', state:'Uttar Pradesh', lat:26.8467, lng:80.9462, support:14},
+  {name:'Indore', state:'Madhya Pradesh', lat:22.7196, lng:75.8577, support:13},
+  {name:'Vadodara', state:'Gujarat', lat:22.3072, lng:73.1812, support:11},
+  {name:'Nagpur', state:'Maharashtra', lat:21.1458, lng:79.0882, support:12}
+];
+
+const doctors = [
+  {id:1,name:'Dr. Aditi Mehta',spec:'Cardiology',key:'cardio',deg:'MBBS, MD, DM Cardiology',exp:'14 years experience',fee:850,rating:4.9,available:true,city:'Mumbai',hospital:'Sahyadri Heart Clinic',address:'4th Floor, Orchid Tower, Bandra West, Mumbai, Maharashtra 400050',phone:'+912245678901',img:'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80'},
+  {id:2,name:'Dr. Rohan Shah',spec:'Orthopedics',key:'ortho',deg:'MBBS, MS Ortho',exp:'11 years experience',fee:700,rating:4.8,available:true,city:'Ahmedabad',hospital:'Spine & Bone Care Centre',address:'Opp. ISKCON Temple, SG Highway, Ahmedabad, Gujarat 380054',phone:'+917940112233',img:'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&q=80'},
+  {id:3,name:'Dr. Priya Iyer',spec:'Dermatology',key:'derma',deg:'MBBS, DDVL',exp:'9 years experience',fee:650,rating:4.7,available:false,city:'Bengaluru',hospital:'SkinWell Dermatology',address:'Koramangala 5th Block, Bengaluru, Karnataka 560095',phone:'+918045667788',img:'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=800&q=80'},
+  {id:4,name:'Dr. Vivek Nair',spec:'Neurology',key:'neuro',deg:'MBBS, MD, DM Neurology',exp:'15 years experience',fee:950,rating:4.9,available:true,city:'Chennai',hospital:'NeuroLife Hospital',address:'Anna Salai, Teynampet, Chennai, Tamil Nadu 600018',phone:'+914442223333',img:'https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?w=800&q=80'},
+  {id:5,name:'Dr. Sana Khan',spec:'Pediatrics',key:'pedia',deg:'MBBS, MD Pediatrics',exp:'8 years experience',fee:550,rating:4.8,available:true,city:'Delhi',hospital:'LittleSteps Child Clinic',address:'Connaught Place, New Delhi, Delhi 110001',phone:'+911145667788',img:'https://images.unsplash.com/photo-1594824475317-1f387f4f0a2d?w=800&q=80'},
+  {id:6,name:'Dr. Meera Joshi',spec:'Gynecology',key:'gynae',deg:'MBBS, MS Obs & Gynae',exp:'13 years experience',fee:800,rating:4.9,available:true,city:'Pune',hospital:'CareHer Women’s Hospital',address:'Baner Road, Pune, Maharashtra 411045',phone:'+912067889900',img:'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80'},
+  {id:7,name:'Dr. Harsh Patel',spec:'Cardiology',key:'cardio',deg:'MBBS, MD Medicine, DM Cardiology',exp:'10 years experience',fee:900,rating:4.8,available:false,city:'Surat',hospital:'Pulse Cardiac Centre',address:'Ring Road, Surat, Gujarat 395002',phone:'+917940223344',img:'https://images.unsplash.com/photo-1504813184591-01572f98c85f?w=800&q=80'},
+  {id:8,name:'Dr. Nikhil Verma',spec:'Orthopedics',key:'ortho',deg:'MBBS, DNB Ortho',exp:'12 years experience',fee:750,rating:4.7,available:true,city:'Lucknow',hospital:'JointCare Ortho Hospital',address:'Gomti Nagar, Lucknow, Uttar Pradesh 226010',phone:'+915222334455',img:'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&q=80'},
+  {id:9,name:'Dr. Ananya Rao',spec:'Dermatology',key:'derma',deg:'MBBS, MD Dermatology',exp:'7 years experience',fee:600,rating:4.8,available:true,city:'Hyderabad',hospital:'Glow Skin Clinic',address:'Banjara Hills, Hyderabad, Telangana 500034',phone:'+914022334455',img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80'}
+];
+
+const state = {
+  city: cities[0],
+  selected: {},
+  selectedDoc: null,
+  selectedDate: null,
+  selectedTime: null,
+  selectedPay: 'UPI'
+};
+
+function switchView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(`view-${id}`).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const map = {home:0,cities:1,directory:2,triage:3};
+  if(map[id] !== undefined) document.querySelectorAll('.nav-tab')[map[id]].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id === 'cities') setTimeout(initMap, 120);
+}
+
+function setCity(city){
+  state.city = city;
+  document.getElementById('active-city-label').textContent = `${city.name}, ${city.state}`;
+  document.getElementById('loc-city').value = city.name;
+  if(cityMarkerMap[city.name]){
+    cityMap.setView([city.lat, city.lng], 10, {animate:true});
+    cityMarkerMap[city.name].openPopup();
+  }
+  renderCities();
+}
+
+function renderSpecialties(){
+  const home = document.getElementById('spec-scroll');
+  const dir = document.getElementById('dir-filter-scroll');
+  home.innerHTML = specialties.map(s => `<div class="spec-chip ${s.id==='all'?'active':''}" onclick="filterSpec('${s.id}')"><span class="spec-emoji">${s.emoji}</span><span class="spec-name">${s.name}</span></div>`).join('');
+  dir.innerHTML = specialties.map(s => `<div class="spec-chip ${s.id==='all'?'active':''}" onclick="filterSpec('${s.id}')"><span class="spec-emoji">${s.emoji}</span><span class="spec-name">${s.name}</span></div>`).join('');
+}
+
+function doctorCard(d, full=false){
+  const verified = d.available ? '<span class="badge ok">Available</span>' : '<span class="badge no">Busy</span>';
+  if(full){
+    return `
+      <div class="doc-full-card" onclick="openCheckout(${d.id})">
+        <div class="doc-full-top">
+          <img class="doc-full-img" src="${d.img}" alt="${d.name}" onerror="this.style.display='none'">
+          <div class="doc-full-info">
+            <div class="verified-pill">✓ Verified Doctor</div>
+            <div class="doc-full-name">${d.name}</div>
+            <div class="doc-full-deg">${d.deg}</div>
+            <div class="doc-full-spec">${d.spec} · ${d.city}</div>
+            <div class="doc-full-exp">⭐ ${d.rating} · ${d.exp}</div>
+          </div>
+        </div>
+        <div class="doc-full-bottom">
+          <div>
+            <div class="doc-hospital">${d.hospital}</div>
+            <div class="doc-price">₹${d.fee}</div>
+          </div>
+          <button class="btn-book" onclick="event.stopPropagation(); openCheckout(${d.id})">Book</button>
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="doc-card" onclick="openCheckout(${d.id})">
+      <img class="doc-card-img" src="${d.img}" alt="${d.name}" onerror="this.style.display='none'">
+      <div class="doc-card-body">
+        <div class="doc-card-name">${d.name}</div>
+        <div class="doc-card-spec">${d.spec}</div>
+        <div class="doc-card-meta">${d.city} · ${d.exp}<br>⭐ ${d.rating} · ${verified}</div>
+      </div>
+      <div class="doc-card-bottom">
+        <div class="fee">₹${d.fee}</div>
+        <div class="badge ${d.available?'ok':'no'}">${d.available?'Available':'Busy'}</div>
+      </div>
+    </div>`;
+}
+
+function renderDoctors(filter='all'){
+  const list = filter==='featured' ? doctors.slice(0,4) : doctors.filter(d => filter==='all' || d.key===filter);
+  document.getElementById('featured-scroll').innerHTML = doctors.slice(0,4).map(d => doctorCard(d,false)).join('');
+  document.getElementById('home-doc-list').innerHTML = list.map(d => doctorCard(d,true)).join('');
+  document.getElementById('dir-list').innerHTML = list.map(d => doctorCard(d,true)).join('');
+  document.getElementById('dir-title').textContent = `${list.length}+ Doctors`;
+  document.getElementById('dir-lbl').textContent = filter==='all' ? 'All Specialists' : specialties.find(s=>s.id===filter)?.name || 'Specialists';
+}
+
+function filterSpec(key){
+  document.querySelectorAll('.spec-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.spec-chip').forEach(c => {
+    const label = c.querySelector('.spec-name')?.textContent?.toLowerCase();
+    const isActive = (key==='all' && label==='all') || label === (specialties.find(s=>s.id===key)?.name || '').toLowerCase();
+    if(isActive) c.classList.add('active');
+  });
+  renderDoctors(key);
+  switchView('directory');
+}
+
+function selectOpt(el,key,val){
+  document.querySelectorAll(`#${el.closest('.triage-step').id} .opt-item`).forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  state.selected[key] = val;
+  document.getElementById(`ts${el.closest('.triage-step').id.slice(-1)}-next`).disabled = false;
+}
+function selectList(el,key,val){
+  document.querySelectorAll(`#${el.closest('.triage-step').id} .opt-list-item`).forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  state.selected[key] = val;
+  document.getElementById(`ts${el.closest('.triage-step').id.slice(-1)}-next`).disabled = false;
+}
+function goStep(n){
+  document.querySelectorAll('.triage-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById(`ts${n}`).classList.add('active');
+  document.getElementById('step-counter').textContent = `Step ${n} of 5`;
+  document.getElementById('progress-fill').style.width = `${n*20}%`;
+  const q = {
+    2:["How long has this been going on?","Tell us the duration of the issue."],
+    3:["How severe are the symptoms?","Choose the severity level."],
+    4:["How would you like to consult?","Pick your preferred consultation mode."],
+    5:["Which city should we search in?","Select your location."]
+  };
+  if(q[n]) document.getElementById('triage-q').textContent = q[n][0];
+  document.getElementById('triage-hint').textContent = q[n] ? q[n][1] : 'Select the category that best matches your symptoms.';
+}
+function checkLoc(){
+  const city = document.getElementById('loc-city').value.trim();
+  document.getElementById('ts5-next').disabled = city.length < 2;
+}
+function renderCities(){
+  document.getElementById('city-scroll').innerHTML = cities.map(c => `
+    <div class="city-chip ${state.city.name===c.name?'active':''}" onclick="setCity(cities.find(x=>x.name==='${c.name}'))">
+      <strong>${c.name}</strong>
+      <span>${c.state} · ${c.support}+ doctors</span>
+    </div>
+  `).join('');
+  document.getElementById('triage-city-scroll').innerHTML = cities.slice(0,8).map(c => `
+    <div class="city-chip ${state.city.name===c.name?'active':''}" onclick="setCity(cities.find(x=>x.name==='${c.name}'))">
+      <strong>${c.name}</strong>
+      <span>${c.state}</span>
+    </div>
+  `).join('');
+}
+let cityMap, cityMarkerMap = {};
+function initMap(){
+  if(cityMap) return;
+  cityMap = L.map('city-map', {scrollWheelZoom:false}).setView([20.5937,78.9629],5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(cityMap);
+  cities.forEach(c=>{
+    const marker = L.marker([c.lat,c.lng]).addTo(cityMap).bindPopup(`<b>${c.name}</b><br>${c.state}<br>${c.support}+ doctors`);
+    marker.on('click',()=>setCity(c));
+    cityMarkerMap[c.name] = marker;
+  });
+}
+function showTriageResults(){
+  const cityName = document.getElementById('loc-city').value.trim() || state.city.name;
+  document.getElementById('active-city-label').textContent = `${cityName}, IN`;
+  renderDoctors(state.selected.concern || 'all');
+  switchView('directory');
+}
+function selectPay(el){
+  document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  state.selectedPay = el.querySelector('.pay-name').textContent;
+}
+function openCheckout(id){
+  const d = doctors.find(x=>x.id===id);
+  state.selectedDoc = d;
+  document.getElementById('co-img').src = d.img;
+  document.getElementById('co-name').textContent = d.name;
+  document.getElementById('co-spec').textContent = `${d.spec} · ${d.deg}`;
+  document.getElementById('co-hosp').textContent = `${d.hospital} · ${d.city}`;
+  document.getElementById('hospital-address').textContent = d.address;
+  document.getElementById('hospital-distance').textContent = `Approx. 2.4 km from ${state.city.name}`;
+  document.getElementById('hospital-map-link').href = `https://www.google.com/maps/search/${encodeURIComponent(d.hospital + ', ' + d.city)}`;
+  document.getElementById('hospital-call-link').href = `tel:${d.phone}`;
+  document.getElementById('rc-fee').textContent = `₹${d.fee}`;
+  const gst = Math.round((d.fee + 49) * 0.18);
+  document.getElementById('rc-gst').textContent = `₹${gst}`;
+  document.getElementById('rc-total').textContent = `₹${d.fee + 49 + gst}`;
+  document.getElementById('pay-btn-amt').textContent = `₹${d.fee + 49 + gst}`;
+  renderDateTime();
+  switchView('checkout');
+}
+function renderDateTime(){
+  const ds = document.getElementById('date-scroll');
+  const ts = document.getElementById('time-grid');
+  const days = [...Array(7)].map((_,i)=>{
+    const dt = new Date(); dt.setDate(dt.getDate()+i);
+    return dt;
+  });
+  ds.innerHTML = days.map((d,i)=>{
+    const day = d.toLocaleDateString('en-IN',{weekday:'short'});
+    const num = d.getDate();
+    return `<div class="city-chip ${i===0?'active':''}" onclick="pickDate('${d.toISOString()}')"><strong>${day}</strong><span>${num}</span></div>`;
+  }).join('');
+  const times = ['09:00 AM','10:30 AM','12:00 PM','02:00 PM','04:00 PM','06:00 PM'];
+  ts.innerHTML = times.map((t,i)=>`<div class="city-chip ${i===0?'active':''}" onclick="pickTime('${t}')"><strong>${t}</strong></div>`).join('');
+  state.selectedDate = days[0].toISOString();
+  state.selectedTime = times[0];
+}
+function pickDate(dt){ state.selectedDate = dt; document.querySelectorAll('#date-scroll .city-chip').forEach(x=>x.classList.remove('active')); event.currentTarget.classList.add('active'); }
+function pickTime(t){ state.selectedTime = t; document.querySelectorAll('#time-grid .city-chip').forEach(x=>x.classList.remove('active')); event.currentTarget.classList.add('active'); }
+function processPayment(){
+  const o = document.getElementById('processing-overlay');
+  o.classList.add('show');
+  setTimeout(()=>{
+    o.classList.remove('show');
+    document.getElementById('conf-id').textContent = 'APPT-' + Math.floor(100000 + Math.random()*900000);
+    document.getElementById('conf-doc').textContent = state.selectedDoc.name;
+    const dt = new Date(state.selectedDate).toLocaleDateString('en-IN',{weekday:'short', day:'numeric', month:'short', year:'numeric'});
+    document.getElementById('conf-dt').textContent = `${dt} · ${state.selectedTime}`;
+    document.getElementById('conf-hosp').textContent = state.selectedDoc.hospital;
+    document.getElementById('conf-loc').textContent = `${state.city.name}, ${state.city.state}`;
+    switchView('success');
+  }, 1800);
+}
+function revealOnScroll(){
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show') });
+  }, {threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+
+renderSpecialties();
+renderDoctors('all');
+renderCities();
+revealOnScroll();
+document.getElementById('loc-city').value = state.city.name;
+document.getElementById('active-city-label').textContent = `${state.city.name}, ${state.city.state}`;
+setTimeout(initMap, 400);
+renderDateTime();
+</script>
+</body>
+</html>
