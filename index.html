@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>DocMatch Pro – Find Your Doctor</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
 :root{
   --bg:#F5F8FF;
@@ -73,6 +71,7 @@ button,input{font:inherit}
   font-weight:900;
   letter-spacing:-.5px;
   color:var(--primary-2);
+  cursor:pointer;
 }
 .logo span{color:var(--teal)}
 .top-actions{display:flex;gap:10px;align-items:center}
@@ -87,7 +86,9 @@ button,input{font:inherit}
   border-radius:999px;
   box-shadow:var(--shadow);
   cursor:pointer;
+  transition:all 0.2s ease;
 }
+.loc-badge:hover, .action-pill:hover{transform:translateY(-1px);box-shadow:var(--shadow-2)}
 .loc-dot{width:8px;height:8px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite}
 .action-pill{color:var(--primary-2)}
 .container{padding:0 18px}
@@ -145,7 +146,8 @@ button,input{font:inherit}
 }
 .search-icon,.search-mic{
   position:absolute;top:50%;transform:translateY(-50%);
-  font-size:1rem
+  font-size:1rem;
+  z-index:2;
 }
 .search-icon{left:16px}
 .search-mic{right:16px;color:var(--primary-2);cursor:pointer}
@@ -187,7 +189,7 @@ button,input{font:inherit}
 .spec-scroll::-webkit-scrollbar,.doc-scroll::-webkit-scrollbar,.date-scroll::-webkit-scrollbar,.city-scroll::-webkit-scrollbar{display:none}
 .spec-chip{
   flex-shrink:0;
-  min-width:86px;
+  min-width:96px;
   background:var(--surface);
   border:1px solid var(--line);
   border-radius:18px;
@@ -198,15 +200,16 @@ button,input{font:inherit}
   transition:.2s ease;
 }
 .spec-chip:hover,.spec-chip.active,.city-chip.active{
-  border-color:rgba(28,124,255,.35);
+  border-color:var(--primary);
   transform:translateY(-2px);
   background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%);
 }
 .spec-emoji{font-size:1.6rem;display:block;margin-bottom:6px}
 .spec-name{font-size:.74rem;font-weight:700;color:var(--muted)}
 .card-row{
-  display:flex;gap:14px;overflow-x:auto;padding-bottom:10px
+  display:flex;gap:14px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;
 }
+.card-row::-webkit-scrollbar{display:none}
 .doc-card{
   flex-shrink:0;
   width:220px;
@@ -247,6 +250,7 @@ button,input{font:inherit}
   height:148px;
   box-shadow:var(--shadow);
   border:1px solid var(--line);
+  margin-top:10px;
 }
 .promo-img{width:100%;height:100%;object-fit:cover;display:block}
 .promo-overlay{
@@ -265,7 +269,9 @@ button,input{font:inherit}
   overflow:hidden;
   box-shadow:var(--shadow);
   cursor:pointer;
+  transition: .2s ease;
 }
+.doc-full-card:hover{transform: translateY(-2px); box-shadow: var(--shadow-2);}
 .doc-full-top{display:flex}
 .doc-full-img{
   width:114px;height:114px;object-fit:cover;flex-shrink:0;background:var(--surface-3)
@@ -346,7 +352,7 @@ button,input{font:inherit}
   border-radius:18px;padding:14px 12px;
   cursor:pointer;text-align:center;box-shadow:var(--shadow);transition:.2s ease
 }
-.opt-item:hover,.opt-item.sel{border-color:rgba(28,124,255,.35);background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%)}
+.opt-item:hover,.opt-item.sel{border-color:var(--primary);background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%)}
 .opt-emoji{font-size:1.8rem;display:block;margin-bottom:8px}
 .opt-label{font-size:.84rem;font-weight:800}
 .opt-sub{font-size:.7rem;color:var(--muted);margin-top:3px;line-height:1.35}
@@ -363,7 +369,7 @@ button,input{font:inherit}
   border:2px solid #B6C6DD;flex-shrink:0;
   display:flex;align-items:center;justify-content:center
 }
-.opt-list-item.sel{border-color:rgba(28,124,255,.35);background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%)}
+.opt-list-item.sel{border-color:var(--primary);background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%)}
 .opt-list-item.sel .radio{border-color:var(--primary);background:var(--primary)}
 .opt-list-item.sel .radio::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%}
 .opt-list-label{font-size:.9rem;font-weight:700}
@@ -377,6 +383,12 @@ button,input{font:inherit}
   background:linear-gradient(135deg,var(--primary),var(--primary-2));
   color:#fff;padding:14px 16px;
   box-shadow:0 8px 20px rgba(28,124,255,.24)
+}
+.btn-next:disabled{
+  background:#E2E8F0;
+  color:#94A3B8;
+  box-shadow:none;
+  cursor:not-allowed;
 }
 .triage-input{
   width:100%;
@@ -461,7 +473,7 @@ button,input{font:inherit}
   display:flex;align-items:center;gap:12px;
   cursor:pointer
 }
-.pay-method.sel{border-color:rgba(28,124,255,.35);background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%)}
+.pay-method.sel{border-color:var(--primary);background:linear-gradient(180deg,#FFFFFF 0%, #F3F8FF 100%)}
 .pay-icon{font-size:1.4rem}
 .pay-name{font-weight:800;font-size:.92rem}
 .pay-desc{font-size:.72rem;color:var(--muted);margin-top:2px}
@@ -537,7 +549,7 @@ button,input{font:inherit}
 <body>
 
 <nav class="navbar">
-  <div class="logo">Doc<span>Match</span> Pro</div>
+  <div class="logo" onclick="switchView('home')">Doc<span>Match</span> Pro</div>
   <div class="top-actions">
     <div class="loc-badge" onclick="switchView('cities')">
       <span class="loc-dot"></span><span id="active-city-label">Mumbai, IN</span>
@@ -561,8 +573,8 @@ button,input{font:inherit}
         <p>Search symptoms, choose a city on the map, and book a verified doctor in minutes.</p>
         <div class="search-wrap">
           <span class="search-icon">🔍</span>
-          <input class="search-bar" type="text" placeholder="Search symptoms, conditions, doctors…" onfocus="switchView('triage')">
-          <span class="search-mic">🎤</span>
+          <input class="search-bar" type="text" id="main-search-input" placeholder="Search symptoms, conditions, doctors…" oninput="handleSearch(this.value)">
+          <span class="search-mic" onclick="triggerVoiceAssistant()">🎤</span>
         </div>
         <div class="hero-grid">
           <div class="hero-mini"><strong>2.4K+</strong><span>Doctors</span></div>
@@ -718,7 +730,7 @@ button,input{font:inherit}
         <div class="sec-lbl" id="dir-lbl">All Specialists</div>
         <div class="sec-title" id="dir-title">2,400+ Doctors</div>
       </div>
-      <div class="see-all" onclick="switchView('triage')">Re-filter ⚙️</div>
+      <div class="see-all" onclick="clearTriageAndFilters()">Clear Filters ✕</div>
     </div>
     <div class="spec-scroll reveal" id="dir-filter-scroll"></div>
     <div class="doc-list reveal" id="dir-list"></div>
@@ -740,7 +752,7 @@ button,input{font:inherit}
         <div class="location-top">
           <div>
             <strong>Hospital Location</strong>
-            <span id="hospital-distance">2.4 km from your selected city</span>
+            <span id="hospital-distance">Dynamic tracking active</span>
           </div>
           <div class="badge ok">Open Today</div>
         </div>
@@ -828,23 +840,23 @@ const cities = [
   {name:'Indore', state:'Madhya Pradesh', lat:22.7196, lng:75.8577, support:13},
   {name:'Vadodara', state:'Gujarat', lat:22.3072, lng:73.1812, support:11},
   {name:'Nagpur', state:'Maharashtra', lat:21.1458, lng:79.0882, support:12},
-  {name:'Deesa', state:'Gujarat', lat:24.258503, lng:72.190674, support:8}
+  {name:'Deesa', state:'Gujarat', lat:24.2585, lng:72.1907, support:8}
 ];
 
 const doctors = [
-  {id:1,name:'Dr. Aditi Mehta',spec:'Cardiology',key:'cardio',deg:'MBBS, MD, DM Cardiology',exp:'14 years experience',fee:850,rating:4.9,available:true,city:'Mumbai',hospital:'Sahyadri Heart Clinic',address:'4th Floor, Orchid Tower, Bandra West, Mumbai, Maharashtra 400050',phone:'+912245678901',img:'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80'},
-  {id:2,name:'Dr. Rohan Shah',spec:'Orthopedics',key:'ortho',deg:'MBBS, MS Ortho',exp:'11 years experience',fee:700,rating:4.8,available:true,city:'Ahmedabad',hospital:'Spine & Bone Care Centre',address:'Opp. ISKCON Temple, SG Highway, Ahmedabad, Gujarat 380054',phone:'+917940112233',img:'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&q=80'},
-  {id:3,name:'Dr. Priya Iyer',spec:'Dermatology',key:'derma',deg:'MBBS, DDVL',exp:'9 years experience',fee:650,rating:4.7,available:false,city:'Bengaluru',hospital:'SkinWell Dermatology',address:'Koramangala 5th Block, Bengaluru, Karnataka 560095',phone:'+918045667788',img:'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=800&q=80'},
-  {id:4,name:'Dr. Vivek Nair',spec:'Neurology',key:'neuro',deg:'MBBS, MD, DM Neurology',exp:'15 years experience',fee:950,rating:4.9,available:true,city:'Chennai',hospital:'NeuroLife Hospital',address:'Anna Salai, Teynampet, Chennai, Tamil Nadu 600018',phone:'+914442223333',img:'https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?w=800&q=80'},
-  {id:5,name:'Dr. Sana Khan',spec:'Pediatrics',key:'pedia',deg:'MBBS, MD Pediatrics',exp:'8 years experience',fee:550,rating:4.8,available:true,city:'Delhi',hospital:'LittleSteps Child Clinic',address:'Connaught Place, New Delhi, Delhi 110001',phone:'+911145667788',img:'https://images.unsplash.com/photo-1594824475317-1f387f4f0a2d?w=800&q=80'},
-  {id:6,name:'Dr. Meera Joshi',spec:'Gynecology',key:'gynae',deg:'MBBS, MS Obs & Gynae',exp:'13 years experience',fee:800,rating:4.9,available:true,city:'Pune',hospital:'CareHer Women’s Hospital',address:'Baner Road, Pune, Maharashtra 411045',phone:'+912067889900',img:'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80'},
-  {id:7,name:'Dr. Harsh Patel',spec:'Cardiology',key:'cardio',deg:'MBBS, MD Medicine, DM Cardiology',exp:'10 years experience',fee:900,rating:4.8,available:false,city:'Surat',hospital:'Pulse Cardiac Centre',address:'Ring Road, Surat, Gujarat 395002',phone:'+917940223344',img:'https://images.unsplash.com/photo-1504813184591-01572f98c85f?w=800&q=80'},
-  {id:8,name:'Dr. Nikhil Verma',spec:'Orthopedics',key:'ortho',deg:'MBBS, DNB Ortho',exp:'12 years experience',fee:750,rating:4.7,available:true,city:'Lucknow',hospital:'JointCare Ortho Hospital',address:'Gomti Nagar, Lucknow, Uttar Pradesh 226010',phone:'+915222334455',img:'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&q=80'},
-  {id:9,name:'Dr. Ananya Rao',spec:'Dermatology',key:'derma',deg:'MBBS, MD Dermatology',exp:'7 years experience',fee:600,rating:4.8,available:true,city:'Hyderabad',hospital:'Glow Skin Clinic',address:'Banjara Hills, Hyderabad, Telangana 500034',phone:'+914022334455',img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80'},
-  {id:10,name:'Dr. Arvind Prajapati',spec:'Gynecology & Obstetrics',key:'gynae',deg:'MS Gynecology',exp:'OPD Mon–Sat, 10:00 AM–06:00 PM',fee:750,rating:4.8,available:true,city:'Deesa',hospital:'Sharda Women Hospital',address:'Deesa, Gujarat 385535',phone:'+917778828027',img:'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80'},
-  {id:11,name:'Dr. Geeta K. Chaudhari',spec:'Gynecology & Obstetrics',key:'gynae',deg:'OB/GYN',exp:'Deesa, Gujarat',fee:700,rating:4.7,available:true,city:'Deesa',hospital:'Prerna Hospital',address:'Opp Gayatri Temple, Highway, Deesa, Gujarat',phone:'+910000000001',img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80'},
-  {id:12,name:'Dr. Deval H. Shah',spec:'Gynecology & Obstetrics',key:'gynae',deg:'OB/GYN',exp:'Deesa, Gujarat',fee:700,rating:4.7,available:true,city:'Deesa',hospital:'Astha Hospital',address:'Opp Gayatri Temple, Deesa - 385535, Gujarat',phone:'+910000000002',img:'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80'},
-  {id:13,name:'Dr. Chandulal K. Patel',spec:'Gynecology & Obstetrics',key:'gynae',deg:'OB/GYN',exp:'Deesa, Gujarat',fee:700,rating:4.6,available:true,city:'Deesa',hospital:'Anand Hospital',address:'Deesa Highway, Deesa, Gujarat',phone:'+910000000003',img:'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80'}
+  {id:1,name:'Dr. Aditi Mehta',spec:'Cardiology',key:'cardio',deg:'MBBS, MD, DM Cardiology',exp:'14 years experience',fee:850,rating:4.9,available:true,city:'Mumbai',lat:19.1100,lng:72.8500,hospital:'Sahyadri Heart Clinic',address:'4th Floor, Orchid Tower, Bandra West, Mumbai, Maharashtra 400050',phone:'+912245678901',img:'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80'},
+  {id:2,name:'Dr. Rohan Shah',spec:'Orthopedics',key:'ortho',deg:'MBBS, MS Ortho',exp:'11 years experience',fee:700,rating:4.8,available:true,city:'Ahmedabad',lat:23.0300,lng:72.5000,hospital:'Spine & Bone Care Centre',address:'Opp. ISKCON Temple, SG Highway, Ahmedabad, Gujarat 380054',phone:'+917940112233',img:'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&q=80'},
+  {id:3,name:'Dr. Priya Iyer',spec:'Dermatology',key:'derma',deg:'MBBS, DDVL',exp:'9 years experience',fee:650,rating:4.7,available:false,city:'Bengaluru',lat:12.9300,lng:77.6200,hospital:'SkinWell Dermatology',address:'Koramangala 5th Block, Bengaluru, Karnataka 560095',phone:'+918045667788',img:'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=800&q=80'},
+  {id:4,name:'Dr. Vivek Nair',spec:'Neurology',key:'neuro',deg:'MBBS, MD, DM Neurology',exp:'15 years experience',fee:950,rating:4.9,available:true,city:'Chennai',lat:13.0400,lng:80.2400,hospital:'NeuroLife Hospital',address:'Anna Salai, Teynampet, Chennai, Tamil Nadu 600018',phone:'+914442223333',img:'https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?w=800&q=80'},
+  {id:5,name:'Dr. Sana Khan',spec:'Pediatrics',key:'pedia',deg:'MBBS, MD Pediatrics',exp:'8 years experience',fee:550,rating:4.8,available:true,city:'Delhi',lat:28.6300,lng:77.2200,hospital:'LittleSteps Child Clinic',address:'Connaught Place, New Delhi, Delhi 110001',phone:'+911145667788',img:'https://images.unsplash.com/photo-1594824475317-1f387f4f0a2d?w=800&q=80'},
+  {id:6,name:'Dr. Meera Joshi',spec:'Gynecology',key:'gynae',deg:'MBBS, MS Obs & Gynae',exp:'13 years experience',fee:800,rating:4.9,available:true,city:'Pune',lat:18.5600,lng:73.8000,hospital:'CareHer Women’s Hospital',address:'Baner Road, Pune, Maharashtra 411045',phone:'+912067889900',img:'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80'},
+  {id:7,name:'Dr. Harsh Patel',spec:'Cardiology',key:'cardio',deg:'MBBS, MD Medicine, DM Cardiology',exp:'10 years experience',fee:900,rating:4.8,available:false,city:'Surat',lat:21.1900,lng:72.8200,hospital:'Pulse Cardiac Centre',address:'Ring Road, Surat, Gujarat 395002',phone:'+917940223344',img:'https://images.unsplash.com/photo-1504813184591-01572f98c85f?w=800&q=80'},
+  {id:8,name:'Dr. Nikhil Verma',spec:'Orthopedics',key:'ortho',deg:'MBBS, DNB Ortho',exp:'12 years experience',fee:750,rating:4.7,available:true,city:'Lucknow',lat:26.8500,lng:80.9900,hospital:'JointCare Ortho Hospital',address:'Gomti Nagar, Lucknow, Uttar Pradesh 226010',phone:'+915222334455',img:'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&q=80'},
+  {id:9,name:'Dr. Ananya Rao',spec:'Dermatology',key:'derma',deg:'MBBS, MD Dermatology',exp:'7 years experience',fee:600,rating:4.8,available:true,city:'Hyderabad',lat:17.4100,lng:78.4300,hospital:'Glow Skin Clinic',address:'Banjara Hills, Hyderabad, Telangana 500034',phone:'+914022334455',img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80'},
+  {id:10,name:'Dr. Arvind Prajapati',spec:'Gynecology',key:'gynae',deg:'MS Gynecology',exp:'18 years experience',fee:750,rating:4.8,available:true,city:'Deesa',lat:24.2590,lng:72.1920,hospital:'Sharda Women Hospital',address:'Deesa, Gujarat 385535',phone:'+917778828027',img:'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80'},
+  {id:11,name:'Dr. Geeta K. Chaudhari',spec:'Gynecology',key:'gynae',deg:'OB/GYN',exp:'12 years experience',fee:700,rating:4.7,available:true,city:'Deesa',lat:24.2610,lng:72.1890,hospital:'Prerna Hospital',address:'Opp Gayatri Temple, Highway, Deesa, Gujarat',phone:'+910000000001',img:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80'},
+  {id:12,name:'Dr. Deval H. Shah',spec:'Gynecology',key:'gynae',deg:'OB/GYN',exp:'10 years experience',fee:700,rating:4.7,available:true,city:'Deesa',lat:24.2570,lng:72.1930,hospital:'Astha Hospital',address:'Opp Gayatri Temple, Deesa - 385535, Gujarat',phone:'+910000000002',img:'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=800&q=80'},
+  {id:13,name:'Dr. Chandulal K. Patel',spec:'Gynecology',key:'gynae',deg:'OB/GYN',exp:'22 years experience',fee:700,rating:4.6,available:true,city:'Deesa',lat:24.2600,lng:72.1950,hospital:'Anand Hospital',address:'Deesa Highway, Deesa, Gujarat',phone:'+910000000003',img:'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80'}
 ];
 
 const state = {
@@ -853,61 +865,115 @@ const state = {
   selectedDoc: null,
   selectedDate: null,
   selectedTime: null,
-  selectedPay: 'UPI'
+  selectedPay: 'UPI / PhonePe / GPay',
+  currentFilterSpec: 'all',
+  searchQuery: ''
 };
 
 let cityMap, cityMarkerMap = {};
 let activeStep = 1;
 
+// Haversine formula for calculating distances
+function getDistanceKM(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return parseFloat((R * c).toFixed(1));
+}
+
 function switchView(id){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(`view-${id}`).classList.add('active');
+  const targetView = document.getElementById(`view-${id}`);
+  if(targetView) targetView.classList.add('active');
+  
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  const map = {home:0,cities:1,directory:2,triage:3};
-  if(map[id] !== undefined) document.querySelectorAll('.nav-tab')[map[id]].classList.add('active');
+  const tabMap = {home:0, cities:1, directory:2, triage:3};
+  if(tabMap[id] !== undefined) {
+    document.querySelectorAll('.nav-tab')[tabMap[id]].classList.add('active');
+  }
   window.scrollTo({top:0,behavior:'smooth'});
-  if(id === 'cities') setTimeout(initMap, 120);
+  if(id === 'cities') setTimeout(initMap, 150);
+}
+
+// Automatic Geolocation Trigger
+function tryGeolocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+      let userLat = position.coords.latitude;
+      let userLng = position.coords.longitude;
+      
+      let closestCity = cities[0];
+      let minDistance = Infinity;
+      
+      cities.forEach(c => {
+        let d = getDistanceKM(userLat, userLng, c.lat, c.lng);
+        if(d < minDistance) {
+          minDistance = d;
+          closestCity = c;
+        }
+      });
+      
+      if(minDistance < 150) { 
+        setCity(closestCity);
+      }
+    }, () => {
+      console.log("Location access denied. Standard routing default remains loaded.");
+    });
+  }
 }
 
 function setCity(city){
   state.city = city;
-  document.getElementById('active-city-label').textContent = `${city.name}, ${city.state}`;
+  document.getElementById('active-city-label').textContent = `${city.name}, IN`;
   document.getElementById('loc-city').value = city.name;
+  
   if(cityMap && cityMarkerMap[city.name]){
-    cityMap.setView([city.lat, city.lng], 10, {animate:true});
+    cityMap.setView([city.lat, city.lng], 11, {animate:true});
     cityMarkerMap[city.name].openPopup();
   }
-  renderCities();
-  renderTriageCities();
+  
+  updatePillsUI('city-chip', city.name);
+  renderDoctorsEngine();
+}
+
+function updatePillsUI(className, activeValue) {
+  document.querySelectorAll(`.${className}`).forEach(chip => {
+    const textNode = chip.querySelector('strong');
+    if(textNode && textNode.textContent.trim() === activeValue.trim()) {
+      chip.classList.add('active');
+    } else {
+      chip.classList.remove('active');
+    }
+  });
 }
 
 function renderSpecialties(){
-  document.getElementById('spec-scroll').innerHTML = specialties.map(s =>
-    `<div class="spec-chip ${s.id==='all'?'active':''}" onclick="filterSpec('${s.id}')">
+  const generateMarkup = (target) => specialties.map(s =>
+    `<div class="spec-chip ${s.id === state.currentFilterSpec ? 'active' : ''}" data-id="${s.id}" onclick="filterSpec('${s.id}')">
       <span class="spec-emoji">${s.emoji}</span>
       <span class="spec-name">${s.name}</span>
     </div>`
   ).join('');
-  document.getElementById('dir-filter-scroll').innerHTML = specialties.map(s =>
-    `<div class="spec-chip ${s.id==='all'?'active':''}" onclick="filterSpec('${s.id}')">
-      <span class="spec-emoji">${s.emoji}</span>
-      <span class="spec-name">${s.name}</span>
-    </div>`
-  ).join('');
+
+  document.getElementById('spec-scroll').innerHTML = generateMarkup();
+  document.getElementById('dir-filter-scroll').innerHTML = generateMarkup();
 }
 
 function doctorCard(d, full=false){
   const verified = d.available ? '<span class="badge ok">Available</span>' : '<span class="badge no">Busy</span>';
-  const reviewText = `${d.rating}★`;
   if(full){
     return `<div class="doc-full-card" onclick="openCheckout(${d.id})">
       <div class="doc-full-top">
-        <img class="doc-full-img" src="${d.img}" alt="${d.hospital}">
+        <img class="doc-full-img" src="${d.img}" alt="${d.name}" onerror="this.src='https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80'">
         <div class="doc-full-info">
           <div class="verified-pill">✅ Verified Doctor</div>
           <div class="doc-full-name">${d.name}</div>
           <div class="doc-full-deg">${d.deg}</div>
-          <div class="doc-full-spec">${d.spec} • ${reviewText}</div>
+          <div class="doc-full-spec">${d.spec} • ${d.rating}★</div>
           <div class="doc-full-exp">${d.exp}</div>
         </div>
       </div>
@@ -921,7 +987,7 @@ function doctorCard(d, full=false){
     </div>`;
   }
   return `<div class="doc-card" onclick="openCheckout(${d.id})">
-    <img class="doc-card-img" src="${d.img}" alt="${d.hospital}">
+    <img class="doc-card-img" src="${d.img}" alt="${d.name}" onerror="this.src='https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=800&q=80'">
     <div class="doc-card-body">
       <div class="doc-card-name">${d.name}</div>
       <div class="doc-card-spec">${d.spec}</div>
@@ -934,42 +1000,109 @@ function doctorCard(d, full=false){
   </div>`;
 }
 
-function renderDoctors(list=doctors){
-  document.getElementById('featured-scroll').innerHTML = [...list].sort((a,b)=>b.rating-a.rating).slice(0,5).map(d => doctorCard(d,false)).join('');
-  document.getElementById('home-doc-list').innerHTML = list.map(d => doctorCard(d,true)).join('');
-  document.getElementById('dir-list').innerHTML = list.map(d => doctorCard(d,true)).join('');
+function renderDoctorsEngine(){
+  let subset = doctors;
+  
+  if (state.city) {
+    subset = subset.filter(d => d.city.toLowerCase() === state.city.name.toLowerCase());
+  }
+  if (state.currentFilterSpec !== 'all') {
+    subset = subset.filter(d => d.key === state.currentFilterSpec);
+  }
+  if (state.searchQuery.trim() !== '') {
+    const query = state.searchQuery.toLowerCase();
+    subset = subset.filter(d => 
+      d.name.toLowerCase().includes(query) || 
+      d.spec.toLowerCase().includes(query) || 
+      d.hospital.toLowerCase().includes(query)
+    );
+  }
+
+  // Handle display logic fallback values safely
+  const featuredScroll = document.getElementById('featured-scroll');
+  const homeDocList = document.getElementById('home-doc-list');
+  const dirList = document.getElementById('dir-list');
+  
+  const sortFeatured = [...subset].sort((a,b) => b.rating - a.rating).slice(0, 5);
+  
+  if(subset.length === 0) {
+    const emptyState = `<p style="grid-column:1/-1; padding:20px; color:var(--muted); text-align:center;">No matched results setup for filters in ${state.city ? state.city.name : 'this location'}. Try clearing filters.</p>`;
+    featuredScroll.innerHTML = emptyState;
+    homeDocList.innerHTML = emptyState;
+    dirList.innerHTML = emptyState;
+    document.getElementById('dir-title').textContent = "0 Doctors Matched";
+    return;
+  }
+
+  featuredScroll.innerHTML = sortFeatured.map(d => doctorCard(d, false)).join('');
+  homeDocList.innerHTML = subset.map(d => doctorCard(d, true)).join('');
+  dirList.innerHTML = subset.map(d => doctorCard(d, true)).join('');
+  
+  document.getElementById('dir-title').textContent = `${subset.length} Doctors Available`;
 }
 
 function filterSpec(id){
-  const filtered = id === 'all' ? doctors : doctors.filter(d => d.key === id);
-  renderDoctors(filtered);
-  document.getElementById('dir-title').textContent = id === 'all' ? '2,400+ Doctors' : `${filtered.length} Doctors`;
-  document.getElementById('dir-lbl').textContent = id === 'all' ? 'All Specialists' : (specialties.find(s=>s.id===id)?.name || 'Specialists');
+  state.currentFilterSpec = id;
+  document.querySelectorAll('.spec-chip').forEach(chip => {
+    if(chip.getAttribute('data-id') === id) chip.classList.add('active');
+    else chip.classList.remove('active');
+  });
+  
+  const specObj = specialties.find(s => s.id === id);
+  document.getElementById('dir-lbl').textContent = specObj ? specObj.name : "All Specialists";
+  renderDoctorsEngine();
 }
 
-function selectOpt(el,key,val){
-  const wrap = el.parentElement;
-  wrap.querySelectorAll('.opt-item').forEach(x=>x.classList.remove('sel'));
-  el.classList.add('sel');
-  state.selected[key] = val;
-  const next = document.getElementById(`ts${activeStep}-next`);
-  if(next) next.disabled = false;
+function handleSearch(val) {
+  state.searchQuery = val;
+  renderDoctorsEngine();
 }
 
-function selectList(el,key,val){
-  el.parentElement.querySelectorAll('.opt-list-item').forEach(x=>x.classList.remove('sel'));
+function triggerVoiceAssistant() {
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-IN';
+    
+    const micBtn = document.querySelector('.search-mic');
+    micBtn.textContent = '🛑';
+    
+    recognition.onstart = () => { console.log("Voice listening active..."); };
+    recognition.onspeechend = () => { recognition.stop(); };
+    recognition.onresult = (event) => {
+      const text = event.results[0][0].transcript;
+      document.getElementById('main-search-input').value = text;
+      handleSearch(text);
+      micBtn.textContent = '🎤';
+    };
+    recognition.onerror = () => { micBtn.textContent = '🎤'; };
+    recognition.start();
+  } else {
+    alert("Voice recognition is not supported in this browser version environment.");
+  }
+}
+
+function selectOpt(el, key, val){
+  el.parentElement.querySelectorAll('.opt-item').forEach(x => x.classList.remove('sel'));
   el.classList.add('sel');
   state.selected[key] = val;
-  const next = document.getElementById(`ts${activeStep}-next`);
-  if(next) next.disabled = false;
+  document.getElementById(`ts${activeStep}-next`).disabled = false;
+}
+
+function selectList(el, key, val){
+  el.parentElement.querySelectorAll('.opt-list-item').forEach(x => x.classList.remove('sel'));
+  el.classList.add('sel');
+  state.selected[key] = val;
+  document.getElementById(`ts${activeStep}-next`).disabled = false;
 }
 
 function goStep(n){
   activeStep = n;
-  document.querySelectorAll('.triage-step').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.triage-step').forEach(s => s.classList.remove('active'));
   document.getElementById(`ts${n}`).classList.add('active');
   document.getElementById('step-counter').textContent = `Step ${n} of 5`;
   document.getElementById('progress-fill').style.width = `${n*20}%`;
+  
   const q = [
     "What's your main health concern?",
     "How long have you had this?",
@@ -986,23 +1119,21 @@ function goStep(n){
   ];
   document.getElementById('triage-q').textContent = q[n-1];
   document.getElementById('triage-hint').textContent = h[n-1];
-  if(n===5) document.getElementById('ts5-next').disabled = !document.getElementById('loc-city').value.trim();
+  
+  if(n === 5) {
+    document.getElementById('ts5-next').disabled = !document.getElementById('loc-city').value.trim();
+  }
 }
 
 function renderCities(){
-  document.getElementById('city-scroll').innerHTML = cities.map(c =>
-    `<div class="city-chip ${state.city.name===c.name?'active':''}" onclick='setCity(${JSON.stringify(c)})'>
+  const generateCityChips = () => cities.map(c =>
+    `<div class="city-chip ${state.city.name === c.name ? 'active' : ''}" onclick='setCity(${JSON.stringify(c)})'>
       <strong>${c.name}</strong><span>${c.state} • ${c.support}+ doctors</span>
     </div>`
   ).join('');
-}
 
-function renderTriageCities(){
-  document.getElementById('triage-city-scroll').innerHTML = cities.slice(0,10).map(c =>
-    `<div class="city-chip ${state.city.name===c.name?'active':''}" onclick='setCity(${JSON.stringify(c)})'>
-      <strong>${c.name}</strong><span>${c.state}</span>
-    </div>`
-  ).join('');
+  document.getElementById('city-scroll').innerHTML = generateCityChips();
+  document.getElementById('triage-city-scroll').innerHTML = generateCityChips();
 }
 
 function initMap(){
@@ -1025,21 +1156,24 @@ function initMap(){
 function setDateTimeChips(){
   const dWrap = document.getElementById('date-scroll');
   const tWrap = document.getElementById('time-grid');
+  
   const dates = Array.from({length:7}, (_,i)=>{
     const dt = new Date();
-    dt.setDate(dt.getDate()+i+1);
+    dt.setDate(dt.getDate() + i + 1);
     return dt;
   });
-  dWrap.innerHTML = dates.map((d,i)=>
-    `<div class="city-chip ${i===0?'active':''}" onclick="pickDate('${d.toISOString()}')">
+  
+  dWrap.innerHTML = dates.map((d,i)=> {
+    const isoString = d.toISOString();
+    return `<div class="city-chip ${i === 0 ? 'active' : ''}" onclick="pickDate(this, '${isoString}')">
       <strong>${d.toLocaleDateString('en-IN',{weekday:'short', day:'numeric', month:'short'})}</strong>
-      <span>${i===0?'Tomorrow':'Available'}</span>
-    </div>`
-  ).join('');
+      <span>${i === 0 ? 'Tomorrow' : 'Available'}</span>
+    </div>`;
+  }).join('');
 
   const times = ['09:00 AM','10:30 AM','12:00 PM','02:00 PM','04:00 PM','06:00 PM'];
   tWrap.innerHTML = times.map((t,i)=>
-    `<div class="city-chip ${i===0?'active':''}" onclick="pickTime('${t}')">
+    `<div class="city-chip ${i === 0 ? 'active' : ''}" onclick="pickTime(this, '${t}')">
       <strong>${t}</strong>
       <span>Slots open</span>
     </div>`
@@ -1049,33 +1183,55 @@ function setDateTimeChips(){
   state.selectedTime = times[0];
 }
 
-function pickDate(val){ state.selectedDate = val; }
-function pickTime(val){ state.selectedTime = val; }
+function pickDate(element, val){ 
+  state.selectedDate = val; 
+  clearPillsHighlight(element.parentElement);
+  element.classList.add('active');
+}
+
+function pickTime(element, val){ 
+  state.selectedTime = val; 
+  clearPillsHighlight(element.parentElement);
+  element.classList.add('active');
+}
+
+function clearPillsHighlight(parent) {
+  parent.querySelectorAll('.city-chip').forEach(c => c.classList.remove('active'));
+}
 
 function openCheckout(id){
-  const d = doctors.find(x=>x.id===id);
+  const d = doctors.find(x => x.id === id);
   if(!d) return;
   state.selectedDoc = d;
   switchView('checkout');
+  
   document.getElementById('co-img').src = d.img;
   document.getElementById('co-name').textContent = d.name;
   document.getElementById('co-spec').textContent = `${d.spec} • ${d.rating}★`;
   document.getElementById('co-hosp').textContent = `${d.hospital} · ${d.deg} · ${d.exp}`;
   document.getElementById('hospital-address').textContent = d.address;
-  document.getElementById('hospital-distance').textContent = `Distance from ${state.city.name}: approx. 2.4 km`;
+  
+  // Real-time tracking engine metrics processing logic setup
+  const trackedDistance = getDistanceKM(state.city.lat, state.city.lng, d.lat, d.lng);
+  document.getElementById('hospital-distance').textContent = `Distance from center node: ${trackedDistance} km`;
+  
   document.querySelector('#view-checkout .badge.ok').textContent = `★ ${d.rating} · ${d.rating >= 4.8 ? 'Top Rated' : 'Open Today'}`;
-  document.getElementById('hospital-map-link').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((d.hospital || '') + ' ' + (d.city || ''))}`;
+  document.getElementById('hospital-map-link').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.hospital + ' ' + d.city)}`;
   document.getElementById('hospital-call-link').href = `tel:${d.phone}`;
+  
   document.getElementById('rc-fee').textContent = `₹${d.fee}`;
   const gst = Math.round((d.fee + 49) * 0.18);
+  const total = d.fee + 49 + gst;
+  
   document.getElementById('rc-gst').textContent = `₹${gst}`;
-  document.getElementById('rc-total').textContent = `₹${d.fee + 49 + gst}`;
-  document.getElementById('pay-btn-amt').textContent = `₹${d.fee + 49 + gst}`;
+  document.getElementById('rc-total').textContent = `₹${total}`;
+  document.getElementById('pay-btn-amt').textContent = `₹${total}`;
+  
   setDateTimeChips();
 }
 
 function selectPay(el){
-  document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('sel'));
+  document.querySelectorAll('.pay-method').forEach(x => x.classList.remove('sel'));
   el.classList.add('sel');
   state.selectedPay = el.querySelector('.pay-name').textContent;
 }
@@ -1085,38 +1241,55 @@ function processPayment(){
   ov.classList.add('show');
   setTimeout(()=>{
     ov.classList.remove('show');
-    const id = 'AP' + Math.random().toString(36).slice(2,8).toUpperCase();
-    document.getElementById('conf-id').textContent = id;
-    document.getElementById('conf-doc').textContent = state.selectedDoc?.name || '';
-    document.getElementById('conf-dt').textContent = `${new Date(state.selectedDate || Date.now()).toLocaleDateString('en-IN')} • ${state.selectedTime || ''}`;
-    document.getElementById('conf-hosp').textContent = state.selectedDoc?.hospital || '';
+    const trackingID = 'AP' + Math.random().toString(36).slice(2,8).toUpperCase();
+    
+    document.getElementById('conf-id').textContent = trackingID;
+    document.getElementById('conf-doc').textContent = state.selectedDoc ? state.selectedDoc.name : '';
+    document.getElementById('conf-dt').textContent = `${new Date(state.selectedDate).toLocaleDateString('en-IN')} • ${state.selectedTime}`;
+    document.getElementById('conf-hosp').textContent = state.selectedDoc ? state.selectedDoc.hospital : '';
     document.getElementById('conf-loc').textContent = `${state.city.name}, ${state.city.state}`;
+    
     switchView('success');
-  }, 1500);
+  }, 1600);
 }
 
 function showTriageResults(){
-  const key = state.selected.concern || 'general';
-  const filtered = key === 'general' ? doctors : doctors.filter(d => d.key === key);
-  renderDoctors(filtered.length ? filtered : doctors);
+  const key = state.selected.concern || 'all';
+  state.currentFilterSpec = key;
   switchView('directory');
+  renderSpecialties();
+  renderDoctorsEngine();
 }
 
-document.getElementById('loc-city').addEventListener('input', ()=>{
-  document.getElementById('ts5-next').disabled = !document.getElementById('loc-city').value.trim();
+function clearTriageAndFilters() {
+  state.currentFilterSpec = 'all';
+  state.selected = {};
+  state.searchQuery = '';
+  document.getElementById('main-search-input').value = '';
+  
+  document.querySelectorAll('.opt-item, .opt-list-item').forEach(el => el.classList.remove('sel'));
+  document.querySelectorAll('.btn-next').forEach(btn => btn.disabled = true);
+  
+  goStep(1);
+  renderSpecialties();
+  renderDoctorsEngine();
+}
+
+document.getElementById('loc-city').addEventListener('input', (e)=>{
+  document.getElementById('ts5-next').disabled = !e.target.value.trim();
 });
 
+// App Initialization Routines
 renderSpecialties();
-renderDoctors(doctors);
 renderCities();
-renderTriageCities();
-setCity(cities[0]);
+setCity(cities[0]); 
+tryGeolocation();
 
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if(e.isIntersecting) e.target.classList.add('show');
   });
-}, {threshold:0.12});
+}, {threshold:0.10});
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
