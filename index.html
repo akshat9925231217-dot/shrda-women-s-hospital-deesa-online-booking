@@ -18,12 +18,15 @@
 
   /* REPLACE THESE 6 VALUES with your Firebase project config */
   const firebaseConfig = {
-    apiKey:            "YOUR_API_KEY",
-    authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId:         "YOUR_PROJECT_ID",
-    storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId:             "YOUR_APP_ID"
+    const firebaseConfig = {
+  apiKey: "AIzaSyCJPt74uBMsF3icEtWhQrgzq2jXsOruVoE",
+  authDomain: "find-my-doctor-51d30.firebaseapp.com",
+  projectId: "find-my-doctor-51d30",
+  storageBucket: "find-my-doctor-51d30.firebasestorage.app",
+  messagingSenderId: "490743986459",
+  appId: "1:490743986459:web:c17bd441b51a58fa1c3bbe"
+};
+    
   };
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -1424,8 +1427,6 @@ window.addEventListener('load',()=>{
   if(savedRole){setRole(savedRole);}
 })();
 </script>
-  <button onclick="loginWithGoogle()" style="padding: 10px 20px; font-size: 16px;">
-  Sign in with Google
-  </button>
+
 </body>
 </html>
