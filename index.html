@@ -1,868 +1,1428 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="DocMatch Pro - India's premier healthcare platform connecting patients with elite verified doctors. Luxury healthcare matching with real Razorpay payments.">
-    <meta name="keywords" content="doctor appointment, best doctors India, verified doctors, online consultation, premium healthcare">
-    <title>DocMatch Pro | India's Premier Healthcare Platform</title>
-    
-    <!-- Premium Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Razorpay -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    
-    <style>
-        :root {
-            --bg: #fafbfc;
-            --surface: #ffffff;
-            --text: #0c0a1d;
-            --text2: #4a4560;
-            --muted: #8b87a0;
-            --border: #e8e5f0;
-            
-            /* Luxury Palette */
-            --gold-100: #fef9e7;
-            --gold-200: #fef0c7;
-            --gold-400: #fbbf24;
-            --gold-500: #f59e0b;
-            --gold-600: #d97706;
-            --gold-800: #92400e;
-            
-            --plum-500: #7c3aed;
-            --plum-600: #6d28d9;
-            --plum-50: #f5f3ff;
-            
-            --emerald-500: #10b981;
-            --emerald-50: #d1fae5;
-            
-            --navy-900: #0f172a;
-            --navy-800: #1e293b;
-            
-            --rose-500: #f43f5e;
-            
-            --radius-sm: 10px;
-            --radius: 16px;
-            --radius-lg: 22px;
-            --radius-xl: 30px;
-            --radius-2xl: 40px;
-            --radius-pill: 9999px;
-            
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
-            --shadow: 0 4px 20px rgba(0,0,0,0.06);
-            --shadow-md: 0 8px 32px rgba(0,0,0,0.10);
-            --shadow-lg: 0 20px 50px rgba(0,0,0,0.14);
-            --shadow-xl: 0 30px 70px rgba(0,0,0,0.20);
-            --shadow-gold: 0 10px 40px rgba(245,158,11,0.25);
-            
-            --font-display: 'Playfair Display', 'Cormorant Garamond', serif;
-            --font-body: 'DM Sans', sans-serif;
-        }
-        
-        * { margin:0; padding:0; box-sizing:border-box; }
-        html { scroll-behavior:smooth; }
-        
-        body {
-            font-family: var(--font-body);
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding-bottom: 80px;
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        body.lang-hi { font-family: 'Noto Sans Devanagari', var(--font-body); }
-        body.lang-gu { font-family: 'Noto Sans Gujarati', var(--font-body); }
-        
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #d1cfe0; border-radius: 10px; }
-        
-        .container { max-width: 480px; margin: 0 auto; padding: 0 16px; }
-        
-        /* ═══════════ LANGUAGE OVERLAY ═══════════ */
-        .lang-overlay {
-            position: fixed; inset: 0; z-index: 10000;
-            background: radial-gradient(ellipse at 30% 20%, #1e293b 0%, #0f172a 50%, #020617 100%);
-            display: flex; align-items: center; justify-content: center; flex-direction: column;
-        }
-        .lang-overlay.hidden { display: none; }
-        
-        .lang-overlay .logo-text {
-            font-family: var(--font-display);
-            font-size: 3.5rem; font-weight: 800;
-            background: linear-gradient(180deg, #fef3c7 0%, #fbbf24 40%, #f59e0b 70%, #b45309 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 4px; text-align: center; letter-spacing: -1px;
-        }
-        
-        .lang-overlay .subtitle {
-            color: #94a3b8; font-size: 0.95rem; margin-bottom: 40px;
-            text-align: center; letter-spacing: 0.8px; font-weight: 400;
-        }
-        
-        .lang-cards { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; padding: 0 10px; }
-        
-        .lang-card {
-            background: rgba(255,255,255,0.03);
-            border: 1.5px solid rgba(255,255,255,0.08);
-            border-radius: var(--radius-xl);
-            padding: 32px 24px; text-align: center; cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1);
-            min-width: 130px; flex: 1; max-width: 150px;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            position: relative; overflow: hidden;
-        }
-        
-        .lang-card::before {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(251,191,36,0.2), transparent 60%);
-            opacity: 0; transition: opacity 0.5s;
-        }
-        
-        .lang-card:hover {
-            transform: translateY(-14px) scale(1.08);
-            border-color: #fbbf24;
-            box-shadow: 0 30px 70px rgba(251,191,36,0.25);
-        }
-        .lang-card:hover::before { opacity: 1; }
-        
-        .lang-flag { font-size: 4rem; display: block; margin-bottom: 14px; position: relative; z-index: 1; }
-        .lang-name { color: white; font-weight: 700; font-size: 1.2rem; position: relative; z-index: 1; }
-        .lang-native { color: #94a3b8; font-size: 0.8rem; margin-top: 4px; position: relative; z-index: 1; }
-        
-        /* ═══════════ HEADER ═══════════ */
-        .header {
-            position: sticky; top: 0; z-index: 100;
-            background: rgba(250,251,252,0.80); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-            padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(232,229,240,0.5);
-        }
-        
-        .logo {
-            font-family: var(--font-display); font-size: 1.7rem; font-weight: 700;
-            color: #1e1b4b; letter-spacing: -0.5px;
-        }
-        .logo span { color: #059669; }
-        
-        .header-right { display: flex; gap: 7px; align-items: center; }
-        
-        .lang-btn {
-            background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-pill);
-            padding: 7px 12px; font-size: 0.72rem; font-weight: 700; cursor: pointer;
-            transition: all 0.2s; display: flex; align-items: center; gap: 4px;
-        }
-        .lang-btn:hover { background: var(--plum-50); border-color: var(--plum-500); }
-        
-        .role-badge {
-            padding: 8px 16px; border-radius: var(--radius-pill); font-size: 0.72rem; font-weight: 700;
-            cursor: pointer; transition: all 0.25s; letter-spacing: 0.3px;
-        }
-        .role-badge.patient { background: #eef2ff; color: #4338ca; border: 2px solid #c7d2fe; }
-        .role-badge.doctor { background: var(--gold-100); color: var(--gold-800); border: 2px solid #fcd34d; }
-        .role-badge:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
-        
-        .coin-badge {
-            background: linear-gradient(135deg, var(--gold-200), #fde68a);
-            border: 2px solid var(--gold-400); border-radius: var(--radius-pill);
-            padding: 8px 14px; font-weight: 800; font-size: 0.73rem;
-            color: var(--gold-800); cursor: pointer; transition: all 0.25s;
-        }
-        .coin-badge:hover { transform: scale(1.05); box-shadow: 0 6px 18px rgba(245,158,11,0.35); }
-        
-        /* ═══════════ BOTTOM NAV ═══════════ */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-            background: rgba(255,255,255,0.90); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
-            display: flex; justify-content: space-around; padding: 8px 6px 20px;
-            border-top: 1px solid var(--border); max-width: 480px; margin: 0 auto;
-            border-radius: 24px 24px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.06);
-        }
-        
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            font-size: 0.58rem; font-weight: 700; color: var(--muted); cursor: pointer;
-            text-transform: uppercase; letter-spacing: 0.6px; padding: 7px 12px;
-            border-radius: 14px; transition: all 0.25s;
-        }
-        .nav-item.active { color: var(--plum-500); background: var(--plum-50); transform: translateY(-4px); }
-        .nav-icon { font-size: 1.4rem; transition: transform 0.2s; }
-        .nav-item.active .nav-icon { transform: scale(1.15); }
-        
-        /* ═══════════ PAGES ═══════════ */
-        .page { display: none; animation: pageIn 0.5s cubic-bezier(0.22,1,0.36,1); padding-top: 14px; }
-        .page.active { display: block; }
-        @keyframes pageIn { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
-        
-        /* ═══════════ CARDS ═══════════ */
-        .card {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px;
-            box-shadow: var(--shadow); transition: all 0.3s;
-        }
-        
-        .card-luxury {
-            background: linear-gradient(160deg, #ffffff 0%, #fefce8 30%, #fffbeb 100%);
-            border: 2px solid #fde68a;
-            box-shadow: var(--shadow-gold);
-            position: relative; overflow: hidden;
-        }
-        .card-luxury::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
-            background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706, #f59e0b, #fbbf24);
-            background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite;
-        }
-        @keyframes shimmer { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
-        
-        .card-dark {
-            background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #1e3a5f 100%);
-            border: 2px solid rgba(245,158,11,0.2); color: white; position: relative; overflow: hidden;
-        }
-        .card-dark::after {
-            content: ''; position: absolute; top: -50px; right: -50px; width: 160px; height: 160px;
-            background: radial-gradient(circle, rgba(245,158,11,0.2), transparent 70%); border-radius: 50%;
-        }
-        
-        /* ═══════════ BUTTONS ═══════════ */
-        .btn {
-            border: none; border-radius: var(--radius-pill); padding: 13px 22px;
-            font-weight: 700; font-size: 0.84rem; cursor: pointer; display: inline-flex;
-            align-items: center; justify-content: center; gap: 7px; font-family: inherit;
-            transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
-            letter-spacing: 0.3px; position: relative; overflow: hidden;
-        }
-        .btn::after {
-            content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0);
-            transition: background 0.3s;
-        }
-        .btn:hover::after { background: rgba(255,255,255,0.12); }
-        .btn:active { transform: scale(0.94); }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-            color: white; box-shadow: 0 10px 30px rgba(79,70,229,0.35);
-        }
-        .btn-primary:hover { box-shadow: 0 16px 40px rgba(79,70,229,0.50); transform: translateY(-3px); }
-        
-        .btn-gold {
-            background: linear-gradient(135deg, #fef3c7, #fbbf24, #f59e0b);
-            color: #0f172a; font-weight: 800;
-            box-shadow: 0 10px 35px rgba(245,158,11,0.45);
-        }
-        .btn-gold:hover { box-shadow: 0 18px 45px rgba(245,158,11,0.60); transform: translateY(-3px); }
-        
-        .btn-emerald {
-            background: linear-gradient(135deg, #34d399, #10b981);
-            color: white; box-shadow: 0 10px 30px rgba(16,185,129,0.35);
-        }
-        
-        .btn-outline {
-            background: transparent; border: 2px solid var(--border); color: var(--text2);
-        }
-        .btn-outline:hover { border-color: var(--plum-500); color: var(--plum-500); background: var(--plum-50); }
-        
-        .btn-full { width: 100%; }
-        .btn-sm { padding: 8px 15px; font-size: 0.73rem; }
-        
-        /* ═══════════ DOCTOR CARD ═══════════ */
-        .doc-card {
-            background: var(--surface); border: 1.5px solid var(--border);
-            border-radius: var(--radius); padding: 15px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 14px; cursor: pointer;
-            transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
-        }
-        .doc-card:hover {
-            box-shadow: var(--shadow-lg); transform: translateY(-5px);
-            border-color: #c7d2fe;
-        }
-        .doc-card.premium {
-            border: 2px solid rgba(245,158,11,0.5);
-            background: linear-gradient(135deg, #fffdf7, #ffffff, #fffdf7);
-        }
-        
-        .doc-avatar {
-            width: 58px; height: 58px; border-radius: var(--radius);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.2rem; flex-shrink: 0;
-            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-        }
-        .doc-avatar.premium-av {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            border: 2px solid var(--gold-400);
-        }
-        
-        .doc-info { flex: 1; min-width: 0; }
-        .doc-name { font-weight: 800; font-size: 0.95rem; line-height: 1.25; }
-        .doc-meta { font-size: 0.74rem; color: var(--text2); margin-top: 2px; }
-        
-        /* ═══════════ BADGES ═══════════ */
-        .badge {
-            display: inline-flex; align-items: center; gap: 3px;
-            padding: 4px 10px; border-radius: var(--radius-pill);
-            font-size: 0.62rem; font-weight: 800; letter-spacing: 0.4px;
-        }
-        .badge-verified { background: var(--emerald-50); color: #065f46; }
-        .badge-premium {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: #0f172a; box-shadow: 0 2px 8px rgba(245,158,11,0.3);
-        }
-        
-        /* ═══════════ SUBSCRIPTION PLANS ═══════════ */
-        .plan-card {
-            background: var(--surface); border: 2px solid var(--border);
-            border-radius: var(--radius-xl); padding: 26px 20px; text-align: center;
-            cursor: pointer; transition: all 0.45s cubic-bezier(0.34,1.56,0.64,1);
-            position: relative; margin-bottom: 16px;
-        }
-        .plan-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
-        
-        .plan-card.featured {
-            border: 3px solid var(--gold-400);
-            background: linear-gradient(170deg, #fffdf7 0%, #fffbeb 30%, #fef3c7 100%);
-            box-shadow: var(--shadow-gold);
-        }
-        .plan-card.featured::before {
-            content: '👑 MOST POPULAR';
-            position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
-            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
-            color: #0f172a; padding: 7px 20px; border-radius: var(--radius-pill);
-            font-size: 0.72rem; font-weight: 800; white-space: nowrap;
-            letter-spacing: 0.6px; box-shadow: 0 6px 20px rgba(245,158,11,0.4);
-        }
-        
-        .plan-price {
-            font-family: var(--font-display); font-size: 3.2rem; font-weight: 800;
-            color: #1e1b4b; line-height: 1;
-        }
-        .plan-price span { font-size: 1rem; color: var(--muted); font-weight: 400; }
-        
-        .feature-list { text-align: left; margin: 16px 0; }
-        .feature-item {
-            display: flex; align-items: center; gap: 10px;
-            padding: 7px 0; font-size: 0.82rem; color: var(--text2);
-        }
-        .feature-item .check { color: var(--emerald-500); font-weight: 800; font-size: 1.1rem; }
-        
-        /* ═══════════ PROFILE ═══════════ */
-        .profile-hero {
-            background: linear-gradient(170deg, #0f172a 0%, #1e1b4b 40%, #1e3a5f 100%);
-            border-radius: var(--radius-2xl); padding: 32px 20px; text-align: center;
-            position: relative; overflow: hidden; margin-bottom: 18px;
-        }
-        .profile-hero::before {
-            content: ''; position: absolute; top: -60px; right: -40px;
-            width: 200px; height: 200px;
-            background: radial-gradient(circle, rgba(245,158,11,0.25), transparent 70%);
-            border-radius: 50%;
-        }
-        .profile-hero::after {
-            content: ''; position: absolute; bottom: -40px; left: -30px;
-            width: 150px; height: 150px;
-            background: radial-gradient(circle, rgba(99,102,241,0.20), transparent 70%);
-            border-radius: 50%;
-        }
-        
-        .avatar-ring {
-            width: 90px; height: 90px; border-radius: 50%;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 14px; position: relative; z-index: 1;
-            box-shadow: 0 8px 32px rgba(245,158,11,0.4);
-        }
-        .avatar-inner {
-            width: 78px; height: 78px; border-radius: 50%;
-            background: #1e293b; display: flex; align-items: center;
-            justify-content: center; font-size: 2.8rem;
-        }
-        
-        .profile-name {
-            color: white; font-family: var(--font-display); font-size: 1.8rem;
-            font-weight: 700; position: relative; z-index: 1;
-        }
-        .profile-tag {
-            display: inline-block; padding: 5px 16px; border-radius: var(--radius-pill);
-            font-size: 0.7rem; font-weight: 700; margin-top: 8px; position: relative; z-index: 1;
-        }
-        .profile-tag.patient-tag { background: rgba(99,102,241,0.35); color: #c7d2fe; border: 1px solid rgba(99,102,241,0.5); }
-        .profile-tag.doctor-tag { background: rgba(245,158,11,0.35); color: #fde68a; border: 1px solid rgba(245,158,11,0.5); }
-        
-        .stat-row {
-            display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
-            margin-top: 18px; position: relative; z-index: 1;
-        }
-        .stat-val { color: white; font-family: var(--font-display); font-size: 2rem; font-weight: 700; }
-        .stat-lbl { color: #94a3b8; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
-        
-        /* ═══════════ MODAL ═══════════ */
-        .modal {
-            display: none; position: fixed; inset: 0; z-index: 300;
-            background: rgba(15,23,42,0.75); backdrop-filter: blur(12px);
-            justify-content: center; align-items: flex-end;
-        }
-        .modal.active { display: flex; }
-        
-        .modal-sheet {
-            background: var(--surface); width: 100%; max-width: 480px;
-            border-radius: 32px 32px 0 0; padding: 22px 18px 36px;
-            max-height: 88vh; overflow-y: auto;
-            animation: slideUp 0.5s cubic-bezier(0.22,1,0.36,1);
-            box-shadow: 0 -20px 60px rgba(0,0,0,0.3);
-        }
-        @keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
-        
-        .modal-handle { width: 44px; height: 5px; background: #d1cfe0; border-radius: 3px; margin: 0 auto 20px; }
-        
-        /* ═══════════ INPUT ═══════════ */
-        .input {
-            width: 100%; padding: 14px 18px; border: 2px solid var(--border);
-            border-radius: var(--radius); font-family: inherit; font-size: 0.85rem;
-            margin-bottom: 10px; outline: none; background: #f8f7fa;
-            transition: all 0.25s;
-        }
-        .input:focus {
-            border-color: var(--plum-500); background: white;
-            box-shadow: 0 0 0 5px rgba(124,58,237,0.07);
-        }
-        textarea.input { min-height: 75px; resize: vertical; }
-        select.input {
-            appearance: none; cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b87a0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 16px center; padding-right: 44px;
-        }
-        
-        .consent-row {
-            display: flex; align-items: flex-start; gap: 9px; margin: 12px 0;
-            font-size: 0.72rem; color: var(--text2); line-height: 1.4;
-        }
-        .consent-row input { margin-top: 2px; width: 17px; height: 17px; accent-color: var(--plum-500); cursor: pointer; }
-        
-        /* ═══════════ PERSUASIVE ═══════════ */
-        .persuasive-block {
-            background: linear-gradient(160deg, #fefce8, #fffbeb, #fef3c7);
-            border: 2px solid #fde68a; border-radius: var(--radius-xl);
-            padding: 24px 20px; margin: 18px 0; text-align: center;
-        }
-        .persuasive-title {
-            font-family: var(--font-display); font-size: 1.5rem; font-weight: 700;
-            color: var(--gold-800); margin-bottom: 10px;
-        }
-        .persuasive-text {
-            font-size: 0.84rem; color: #78350f; line-height: 1.7; margin-bottom: 14px;
-        }
-        
-        .section-title {
-            font-family: var(--font-display); font-size: 1.55rem; font-weight: 700;
-            margin-bottom: 12px; letter-spacing: -0.3px;
-        }
-        
-        .text-center { text-align: center; }
-        .text-muted { color: var(--muted); font-size: 0.78rem; }
-        .mt4 { margin-top:4px; } .mt8 { margin-top:8px; } .mt12 { margin-top:12px; }
-        .mt16 { margin-top:16px; } .mt20 { margin-top:20px; }
-        .mb8 { margin-bottom:8px; } .mb12 { margin-bottom:12px; } .mb16 { margin-bottom:16px; }
-        .fw800 { font-weight:800; } .fw700 { font-weight:700; }
-        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-        
-        @media(max-width:380px) { .grid-2 { grid-template-columns:1fr; } .stat-row { grid-template-columns:1fr 1fr; } }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>DocMatch Pro — India's Premier Healthcare Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- FIREBASE: Replace placeholders with your config from https://console.firebase.google.com -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, collection, query, where, getDocs, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+  /* REPLACE THESE 6 VALUES with your Firebase project config */
+  const firebaseConfig = {
+    apiKey:            "YOUR_API_KEY",
+    authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId:         "YOUR_PROJECT_ID",
+    storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId:             "YOUR_APP_ID"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const storage = getStorage(app);
+  const googleProvider = new GoogleAuthProvider();
+  window._fb = { auth, db, storage, googleProvider,
+    signInWithPopup, signOut, onAuthStateChanged,
+    createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    doc, getDoc, setDoc, addDoc, updateDoc,
+    collection, query, where, getDocs, serverTimestamp };
+</script>
+<style>
+:root{
+  --bg:#F7F6F2; --bg2:#EFEDE8; --white:#FFFFFF;
+  --ink:#0C0A1D; --ink2:#3D3858; --muted:#8B87A0; --line:#E8E5F0;
+  --gold:#C9882A; --gold2:#A06820; --gold-lt:#FEF9E7; --gold-md:#FEF0C7;
+  --gold-glow:rgba(201,136,42,0.25);
+  --plum:#4F46E5; --plum2:#3730A3; --plum-lt:#EEF2FF;
+  --teal:#059669; --teal-lt:#D1FAE5;
+  --red:#E11D48; --red-lt:#FFE4E6;
+  --r:14px; --r2:22px; --r3:999px;
+  --sh:0 2px 12px rgba(12,10,29,.06),0 6px 28px rgba(12,10,29,.04);
+  --sh2:0 8px 32px rgba(12,10,29,.10),0 20px 48px rgba(12,10,29,.08);
+  --sh-gold:0 8px 32px rgba(201,136,42,.22),0 2px 8px rgba(201,136,42,.14);
+  --font-d:'Playfair Display','Cormorant Garamond',serif;
+  --font-b:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--font-b);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;padding-bottom:84px}
+body.lang-hi{font-family:'Noto Sans Devanagari',sans-serif}
+body.lang-gu{font-family:'Noto Sans Gujarati',sans-serif}
+body::after{content:'';position:fixed;top:-30vh;right:-20vw;width:70vw;height:70vw;
+  background:radial-gradient(circle,rgba(201,136,42,.08) 0%,transparent 65%);
+  border-radius:50%;pointer-events:none;z-index:0;
+  animation:goldPulse 8s ease-in-out infinite alternate}
+@keyframes goldPulse{0%{transform:scale(1)}100%{transform:scale(1.2) translateY(4vh)}}
+.page{display:none;position:relative;z-index:1;animation:pageIn .4s cubic-bezier(.22,1,.36,1)}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.wrap{padding:0 16px;max-width:480px;margin:0 auto}
+
+/* LANGUAGE OVERLAY */
+#lang-overlay{position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(160deg,#0C0A1D 0%,#1C1830 40%,#14213D 100%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+#lang-overlay.gone{display:none}
+.lo-logo{font-family:var(--font-d);font-size:3.2rem;font-weight:800;
+  background:linear-gradient(180deg,#FEF3C7 0%,#FBBF24 40%,#D97706 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  text-align:center;margin-bottom:6px}
+.lo-sub{color:#64748B;font-size:.85rem;text-align:center;margin-bottom:42px;line-height:1.7}
+.lo-cards{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.lo-card{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);
+  border-radius:22px;padding:30px 22px;text-align:center;cursor:pointer;min-width:120px;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.lo-card::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(251,191,36,.18),transparent 60%);
+  opacity:0;transition:opacity .4s}
+.lo-card:hover{transform:translateY(-12px) scale(1.06);border-color:#FBBF24;
+  box-shadow:0 28px 60px rgba(251,191,36,.22)}
+.lo-card:hover::before{opacity:1}
+.lo-flag{font-size:3.5rem;display:block;margin-bottom:12px}
+.lo-name{color:#FFF;font-weight:700;font-size:1.1rem}
+.lo-native{color:#94A3B8;font-size:.75rem;margin-top:4px}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:700;
+  background:rgba(247,246,242,.92);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  border-bottom:1px solid rgba(232,229,240,.7);padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 1px 20px rgba(12,10,29,.04)}
+.logo{font-family:var(--font-d);font-size:1.65rem;font-weight:700;color:#1C1830;letter-spacing:-.3px}
+.logo span{color:var(--teal)}
+.hdr-right{display:flex;gap:7px;align-items:center}
+.lang-btn{background:var(--white);border:1px solid var(--line);border-radius:var(--r3);
+  padding:7px 12px;font-size:.72rem;font-weight:700;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;gap:5px}
+.lang-btn:hover{border-color:var(--plum);color:var(--plum)}
+.role-pill{padding:8px 14px;border-radius:var(--r3);font-size:.72rem;font-weight:800;
+  cursor:pointer;transition:all .2s;border:2px solid;letter-spacing:.3px}
+.role-pill.patient{background:var(--plum-lt);color:var(--plum2);border-color:#C7D2FE}
+.role-pill.doctor{background:var(--gold-md);color:var(--gold2);border-color:#FCD34D}
+.role-pill:hover{transform:translateY(-1px);box-shadow:var(--sh)}
+.coin-pill{background:linear-gradient(135deg,var(--gold-md),#FDE68A);border:2px solid var(--gold);
+  border-radius:var(--r3);padding:8px 13px;font-weight:800;font-size:.73rem;color:var(--gold2);
+  cursor:pointer;transition:.2s}
+.coin-pill:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(201,136,42,.3)}
+
+/* BOTTOM NAV */
+.bot-nav{position:fixed;bottom:0;left:0;right:0;z-index:700;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  display:flex;padding:8px 4px 18px;border-top:1px solid rgba(232,229,240,.9);
+  box-shadow:0 -6px 32px rgba(12,10,29,.06)}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  color:var(--muted);font-size:.6rem;font-weight:700;cursor:pointer;padding:5px 3px;
+  text-transform:uppercase;letter-spacing:.5px;transition:all .2s;border-radius:12px;margin:0 2px}
+.nav-tab .ni{font-size:1.25rem;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.nav-tab.active{color:var(--plum);background:var(--plum-lt)}
+.nav-tab.active .ni{transform:translateY(-3px) scale(1.18)}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);padding:20px;box-shadow:var(--sh)}
+.card-gold{background:linear-gradient(160deg,#FFFDF7 0%,#FFF8E7 50%,#FEF3C7 100%);
+  border:2px solid #FDE68A;box-shadow:var(--sh-gold);position:relative;overflow:hidden}
+.card-gold::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,#FBBF24,#F59E0B,#D97706,#F59E0B,#FBBF24);
+  background-size:200% 100%;animation:shimmer 3s ease-in-out infinite}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.card-dark{background:linear-gradient(160deg,#0F172A 0%,#1C1830 50%,#1A2844 100%);
+  border:1.5px solid rgba(201,136,42,.2);color:#FFF;position:relative;overflow:hidden}
+.card-dark::after{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;
+  background:radial-gradient(circle,rgba(201,136,42,.2),transparent 70%);border-radius:50%}
+
+/* DOCTOR CARDS */
+.doc-card{background:var(--white);border:1.5px solid var(--line);border-radius:var(--r2);
+  overflow:hidden;cursor:pointer;box-shadow:var(--sh);
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);margin-bottom:12px}
+.doc-card:hover{transform:translateY(-5px);box-shadow:var(--sh2);border-color:#C7D2FE}
+.doc-card.best-choice{border:2.5px solid var(--gold);background:linear-gradient(160deg,#FFFDF7,#FFF8E7)}
+.doc-card-top{display:flex}
+.doc-avatar-wrap{width:100px;height:100px;flex-shrink:0;background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;font-size:3.2rem}
+.doc-info{padding:13px;flex:1;min-width:0}
+.doc-name{font-weight:800;font-size:.95rem;margin-bottom:3px;line-height:1.25}
+.doc-deg{font-size:.72rem;color:var(--plum);font-weight:700;margin-bottom:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-spec{font-size:.76rem;color:var(--muted)}
+.doc-exp{font-size:.7rem;color:var(--gold);font-weight:800;margin-top:4px}
+.doc-bottom{border-top:1px solid var(--line);padding:11px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px}
+.doc-hosp{font-size:.72rem;color:var(--muted);line-height:1.4}
+.doc-price{font-family:var(--font-d);font-size:1.1rem;font-weight:700}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;
+  border-radius:var(--r3);font-size:.62rem;font-weight:900;letter-spacing:.3px}
+.badge-green{background:var(--teal-lt);color:#065F46}
+.badge-gold{background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#0F172A;
+  box-shadow:0 2px 8px rgba(245,158,11,.28)}
+.badge-plum{background:var(--plum-lt);color:var(--plum2)}
+.badge-best{background:linear-gradient(135deg,#D97706,#F59E0B);color:#FFF;
+  font-size:.65rem;font-weight:900;padding:4px 10px;
+  box-shadow:0 3px 10px rgba(217,119,6,.35)}
+.badge-red{background:var(--red-lt);color:var(--red)}
+
+/* BUTTONS */
+.btn{border:none;border-radius:var(--r3);padding:13px 22px;font-weight:800;font-size:.85rem;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  font-family:inherit;transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  letter-spacing:.3px;position:relative;overflow:hidden}
+.btn:active{transform:scale(.95)}
+.btn-primary{background:linear-gradient(135deg,var(--plum),var(--plum2));color:#FFF;
+  box-shadow:0 8px 24px rgba(79,70,229,.3)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(79,70,229,.45)}
+.btn-gold{background:linear-gradient(135deg,#FEF3C7,#FBBF24,#F59E0B);color:#0F172A;font-weight:900;
+  box-shadow:0 8px 28px rgba(245,158,11,.4)}
+.btn-gold:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(245,158,11,.55)}
+.btn-teal{background:linear-gradient(135deg,#34D399,#059669);color:#FFF;
+  box-shadow:0 8px 24px rgba(5,150,105,.28)}
+.btn-teal:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(5,150,105,.4)}
+.btn-outline{background:transparent;border:2px solid var(--line);color:var(--ink2)}
+.btn-outline:hover{border-color:var(--plum);color:var(--plum);background:var(--plum-lt)}
+.btn-full{width:100%}
+.btn-sm{padding:8px 16px;font-size:.76rem}
+
+/* SECTION HEADERS */
+.sec-lbl{font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:1.4px;color:var(--gold);margin-bottom:4px}
+.sec-title{font-family:var(--font-d);font-size:1.35rem;font-weight:700;letter-spacing:-.2px}
+.sec-row{display:flex;justify-content:space-between;align-items:flex-end;margin:22px 0 12px}
+.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:2px 0 6px}
+.hscroll::-webkit-scrollbar{display:none}
+
+/* INPUT */
+.input{width:100%;padding:13px 16px;border:2px solid var(--line);border-radius:14px;
+  font-family:inherit;font-size:.87rem;margin-bottom:10px;outline:none;
+  background:#FAFAFA;transition:.2s;color:var(--ink)}
+.input:focus{border-color:var(--plum);background:var(--white);box-shadow:0 0 0 4px rgba(79,70,229,.07)}
+textarea.input{min-height:75px;resize:vertical}
+select.input{appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%238B87A0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 15px center;padding-right:40px}
+.form-label{font-size:.8rem;font-weight:700;color:var(--ink2);margin-bottom:5px;display:block}
+
+/* PROFILE HERO */
+.profile-hero{background:linear-gradient(170deg,#0F172A 0%,#1C1830 40%,#14213D 100%);
+  border-radius:var(--r2);padding:30px 20px;text-align:center;
+  position:relative;overflow:hidden;margin-bottom:18px}
+.profile-hero::before{content:'';position:absolute;top:-60px;right:-40px;width:200px;height:200px;
+  background:radial-gradient(circle,rgba(201,136,42,.25),transparent 70%);border-radius:50%}
+.profile-hero::after{content:'';position:absolute;bottom:-40px;left:-30px;width:150px;height:150px;
+  background:radial-gradient(circle,rgba(79,70,229,.2),transparent 70%);border-radius:50%}
+.avatar-ring{width:88px;height:88px;border-radius:50%;
+  background:linear-gradient(135deg,#FBBF24,#F59E0B,#D97706);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 14px;
+  position:relative;z-index:1;box-shadow:0 8px 28px rgba(201,136,42,.4)}
+.avatar-inner{width:76px;height:76px;border-radius:50%;background:#1E293B;
+  display:flex;align-items:center;justify-content:center;font-size:2.8rem}
+.profile-name{color:#FFF;font-family:var(--font-d);font-size:1.7rem;font-weight:700;
+  position:relative;z-index:1;margin-bottom:4px}
+.profile-sub{color:#94A3B8;font-size:.82rem;position:relative;z-index:1}
+.prof-tag{display:inline-block;padding:5px 14px;border-radius:var(--r3);
+  font-size:.68rem;font-weight:700;margin-top:8px;position:relative;z-index:1}
+.prof-tag.patient-t{background:rgba(79,70,229,.3);color:#C7D2FE;border:1px solid rgba(79,70,229,.5)}
+.prof-tag.doctor-t{background:rgba(201,136,42,.3);color:#FDE68A;border:1px solid rgba(201,136,42,.5)}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;position:relative;z-index:1}
+.stat-val{color:#FFF;font-family:var(--font-d);font-size:1.9rem;font-weight:700}
+.stat-lbl{color:#94A3B8;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;z-index:900;
+  background:rgba(12,10,29,.6);backdrop-filter:blur(10px);
+  align-items:flex-end;justify-content:center}
+.modal.open{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-sheet{background:var(--white);width:100%;max-width:480px;
+  border-radius:28px 28px 0 0;padding:24px 18px 36px;max-height:90vh;overflow-y:auto;
+  animation:slideUp .4s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 -16px 50px rgba(12,10,29,.18)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:42px;height:4px;background:var(--line);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-family:var(--font-d);font-size:1.6rem;font-weight:700;text-align:center;margin-bottom:6px}
+.modal-sub{font-size:.86rem;color:var(--muted);text-align:center;margin-bottom:18px;line-height:1.6}
+
+/* PLAN CARDS */
+.plan-card{background:var(--white);border:2px solid var(--line);border-radius:var(--r2);
+  padding:24px 18px;text-align:center;cursor:pointer;
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);position:relative;margin-bottom:14px}
+.plan-card:hover{transform:translateY(-5px);box-shadow:var(--sh2)}
+.plan-card.featured{border:3px solid var(--gold);
+  background:linear-gradient(170deg,#FFFDF7 0%,#FFFBEB 50%,#FEF3C7 100%);box-shadow:var(--sh-gold)}
+.plan-card.featured::before{content:'👑 MOST POPULAR';
+  position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#FBBF24,#F59E0B,#D97706);color:#0F172A;
+  padding:6px 18px;border-radius:var(--r3);font-size:.68rem;font-weight:900;
+  white-space:nowrap;letter-spacing:.6px;box-shadow:0 5px 16px rgba(245,158,11,.35)}
+.plan-price{font-family:var(--font-d);font-size:3rem;font-weight:800;color:var(--ink);line-height:1}
+.plan-price span{font-size:.95rem;color:var(--muted);font-weight:400}
+.feature-list{text-align:left;margin:14px 0}
+.feature-item{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:.82rem;color:var(--ink2)}
+.feature-item::before{content:'✓';color:var(--teal);font-weight:900;font-size:.9rem;flex-shrink:0}
+
+/* TRIAGE */
+.triage-hdr{background:linear-gradient(135deg,var(--plum),var(--plum2));border-radius:var(--r2);
+  padding:20px;margin-bottom:14px;color:#FFF;position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(79,70,229,.28)}
+.triage-hdr::before{content:'';position:absolute;top:-30px;right:-30px;width:130px;height:130px;
+  background:rgba(255,255,255,.08);border-radius:50%}
+.prog-bar{background:rgba(255,255,255,.22);height:5px;border-radius:3px;margin-top:14px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:#FFF;transition:width .4s cubic-bezier(.22,1,.36,1)}
+.opt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.opt-item{background:var(--white);border:1.5px solid var(--line);border-radius:18px;
+  padding:14px 10px;cursor:pointer;text-align:center;box-shadow:var(--sh);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+.opt-item:hover,.opt-item.sel{border-color:rgba(79,70,229,.35);
+  background:linear-gradient(180deg,#FFF 0%,#EEF2FF 100%);
+  transform:translateY(-3px);box-shadow:var(--sh2)}
+.opt-em{font-size:1.7rem;display:block;margin-bottom:6px}
+.opt-lbl{font-size:.84rem;font-weight:800;color:var(--ink)}
+.opt-sub{font-size:.68rem;color:var(--muted);margin-top:3px}
+.triage-step{display:none}
+.triage-step.active{display:block;animation:pageIn .3s ease}
+.triage-nav{display:flex;gap:9px;margin-top:6px}
+.btn-back{background:var(--bg2);border:1px solid var(--line);color:var(--ink2);border-radius:var(--r3);
+  padding:12px 18px;font-family:inherit;font-size:.86rem;font-weight:700;cursor:pointer;transition:.2s}
+.btn-back:hover{border-color:var(--plum);color:var(--plum)}
+.btn-next{flex:1;background:linear-gradient(135deg,var(--plum),var(--plum2));color:#FFF;border:none;
+  border-radius:var(--r3);padding:13px;font-family:inherit;font-size:.9rem;font-weight:800;
+  cursor:pointer;box-shadow:0 8px 24px rgba(79,70,229,.3);transition:.2s}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(79,70,229,.42)}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* CHECKOUT */
+.co-doc-wrap{border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:14px}
+.co-doc-top{display:flex}
+.co-avatar{width:100px;height:100px;flex-shrink:0;background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;font-size:3.2rem}
+.co-info{padding:14px;flex:1}
+.co-name{font-family:var(--font-d);font-size:1.1rem;font-weight:700;margin-bottom:3px}
+.co-spec{font-size:.79rem;font-weight:700;color:var(--plum);margin-bottom:3px}
+.co-hosp{font-size:.74rem;color:var(--muted)}
+.date-chip{flex-shrink:0;background:var(--white);border:1.5px solid var(--line);
+  border-radius:14px;padding:10px 14px;cursor:pointer;transition:.2s;box-shadow:var(--sh);text-align:center}
+.date-chip.sel{border-color:var(--plum);background:linear-gradient(180deg,#FFF 0%,#EEF2FF 100%)}
+.date-day{font-size:.62rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.date-num{font-family:var(--font-d);font-size:1.3rem;font-weight:700;display:block}
+.date-chip.sel .date-day,.date-chip.sel .date-num{color:var(--plum2)}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.time-chip{background:var(--white);border:1.5px solid var(--line);border-radius:12px;
+  padding:10px;text-align:center;font-size:.78rem;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.time-chip:hover,.time-chip.sel{border-color:var(--plum);color:var(--plum);background:var(--plum-lt)}
+.time-chip.busy{opacity:.4;cursor:not-allowed;text-decoration:line-through;background:var(--bg2)}
+.receipt-card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--sh)}
+.receipt-title{font-size:.66rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:13px}
+.r-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;font-size:.86rem}
+.r-lbl{color:var(--muted)} .r-val{font-weight:800}
+hr.r-div{height:1px;background:var(--line);border:none;margin:11px 0}
+.r-total{display:flex;justify-content:space-between;align-items:center}
+.r-total-lbl{font-size:.9rem;font-weight:900}
+.r-total-val{font-family:var(--font-d);font-size:1.55rem;font-weight:700;color:var(--plum2)}
+.pay-item{background:var(--white);border:1.5px solid var(--line);border-radius:16px;
+  padding:13px;display:flex;align-items:center;gap:11px;cursor:pointer;box-shadow:var(--sh);
+  transition:.2s;margin-bottom:9px}
+.pay-item:hover,.pay-item.sel{border-color:rgba(79,70,229,.35);background:linear-gradient(180deg,#FFF 0%,#EEF2FF 100%)}
+.pay-name{font-weight:800;font-size:.88rem} .pay-desc{font-size:.7rem;color:var(--muted);margin-top:1px}
+.pay-radio{margin-left:auto;width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);
+  flex-shrink:0;transition:.2s;display:flex;align-items:center;justify-content:center}
+.pay-item.sel .pay-radio{border-color:var(--plum);background:var(--plum)}
+.pay-item.sel .pay-radio::after{content:'';width:7px;height:7px;background:#FFF;border-radius:50%}
+
+/* SUCCESS */
+.success-wrap{padding:40px 18px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.success-ring{width:100px;height:100px;border-radius:50%;background:var(--teal-lt);
+  border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;
+  font-size:2.4rem;margin-bottom:22px;animation:bounceIn .55s ease}
+@keyframes bounceIn{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.conf-card{width:100%;background:var(--white);border:1px solid var(--line);border-radius:20px;
+  padding:17px;box-shadow:var(--sh);text-align:left;margin-bottom:18px}
+.conf-row{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px;font-size:.84rem}
+.conf-lbl{color:var(--muted)} .conf-val{font-weight:800}
+
+/* PROCESSING */
+.proc-overlay{display:none;position:fixed;inset:0;z-index:950;
+  background:rgba(247,246,242,.95);backdrop-filter:blur(12px);
+  flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.proc-overlay.show{display:flex;animation:fadeIn .3s ease}
+.spinner{width:52px;height:52px;border-radius:50%;
+  border:3px solid rgba(79,70,229,.15);border-top-color:var(--plum);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* AUTH TABS */
+.auth-tabs{display:flex;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.auth-tab{flex:1;padding:11px;text-align:center;font-size:.84rem;font-weight:700;
+  cursor:pointer;background:var(--bg2);color:var(--muted);transition:.2s}
+.auth-tab.active{background:var(--plum);color:#FFF}
+.consent-row{display:flex;align-items:flex-start;gap:9px;margin:12px 0;
+  font-size:.72rem;color:var(--ink2);line-height:1.4}
+.consent-row input{margin-top:2px;width:17px;height:17px;accent-color:var(--plum);cursor:pointer}
+
+/* PROFILE MENU */
+.pm-list{display:flex;flex-direction:column;gap:1px;background:var(--line);
+  border-radius:var(--r2);overflow:hidden;border:1px solid var(--line);box-shadow:var(--sh)}
+.pm-item{background:var(--white);padding:16px 18px;display:flex;align-items:center;
+  gap:14px;cursor:pointer;transition:background .15s}
+.pm-item:hover{background:var(--bg2)}
+.pm-icon{font-size:1.25rem;width:36px;height:36px;border-radius:12px;background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pm-title{font-size:.9rem;font-weight:700}
+.pm-sub{font-size:.7rem;color:var(--muted);margin-top:2px}
+.pm-arrow{margin-left:auto;color:var(--muted);font-size:.85rem}
+
+/* LISTING CARD */
+.listing-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r2);
+  padding:15px;margin-bottom:10px;box-shadow:var(--sh)}
+.listing-name{font-weight:800;font-size:.92rem;margin-bottom:3px}
+.listing-meta{font-size:.76rem;color:var(--muted);margin-bottom:6px}
+.listing-active{color:var(--teal);font-size:.72rem;font-weight:700}
+.listing-expired{color:var(--red);font-size:.72rem;font-weight:700}
+
+/* UTILS */
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt14{margin-top:14px}
+.mt16{margin-top:16px}.mt20{margin-top:20px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb14{margin-bottom:14px}
+.gap12{display:flex;flex-direction:column;gap:12px}
+.fs-note{font-size:.72rem;color:var(--muted);text-align:center;margin-top:8px;line-height:1.5}
+.text-center{text-align:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:380px){.opt-grid,.grid2{grid-template-columns:1fr}.time-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
 </head>
-<body class="lang-en">
+<body>
 
-    <!-- ═══════════ LANGUAGE OVERLAY ═══════════ -->
-    <div class="lang-overlay" id="langOverlay">
-        <div class="logo-text">DocMatch Pro</div>
-        <div class="subtitle">Choose Your Language · अपनी भाषा चुनें · તમારી ભાષા પસંદ કરો</div>
-        <div class="lang-cards">
-            <div class="lang-card" onclick="selectLanguage('en')">
-                <span class="lang-flag">🇬🇧</span><div class="lang-name">English</div><div class="lang-native">English</div>
-            </div>
-            <div class="lang-card" onclick="selectLanguage('hi')">
-                <span class="lang-flag">🇮🇳</span><div class="lang-name">हिन्दी</div><div class="lang-native">Hindi</div>
-            </div>
-            <div class="lang-card" onclick="selectLanguage('gu')">
-                <span class="lang-flag">🇮🇳</span><div class="lang-name">ગુજરાતી</div><div class="lang-native">Gujarati</div>
-            </div>
+<!-- PROCESSING OVERLAY -->
+<div class="proc-overlay" id="proc-overlay">
+  <div class="spinner"></div>
+  <div style="font-family:var(--font-d);font-size:1.3rem;font-weight:700">Processing Payment…</div>
+  <div style="color:var(--muted);font-size:.84rem">Please do not close this window</div>
+</div>
+
+<!-- LANGUAGE OVERLAY -->
+<div id="lang-overlay">
+  <div class="lo-logo">DocMatch Pro</div>
+  <div class="lo-sub">Choose Your Language<br>अपनी भाषा चुनें · તમારી ભાષા પસંદ કરો</div>
+  <div class="lo-cards">
+    <div class="lo-card" onclick="selectLang('en')"><span class="lo-flag">🇬🇧</span><div class="lo-name">English</div><div class="lo-native">English</div></div>
+    <div class="lo-card" onclick="selectLang('hi')"><span class="lo-flag">🇮🇳</span><div class="lo-name">हिन्दी</div><div class="lo-native">Hindi</div></div>
+    <div class="lo-card" onclick="selectLang('gu')"><span class="lo-flag">🇮🇳</span><div class="lo-name">ગુજરાતી</div><div class="lo-native">Gujarati</div></div>
+  </div>
+</div>
+
+<!-- MAIN MODAL -->
+<div class="modal" id="main-modal">
+  <div class="modal-sheet" id="modal-body"><div class="modal-handle"></div></div>
+</div>
+
+<!-- HEADER -->
+<header class="header" id="main-header" style="display:none">
+  <div class="logo">Doc<span>Match</span> Pro</div>
+  <div class="hdr-right">
+    <div class="lang-btn" onclick="document.getElementById('lang-overlay').classList.remove('gone')">🌐 <span id="lang-lbl">EN</span></div>
+    <div class="role-pill patient" id="role-pill" onclick="switchRole()">👤 Patient</div>
+    <div class="coin-pill" onclick="showPage('profile')">🪙 <span id="hdr-coins">0</span></div>
+  </div>
+</header>
+
+<!-- PAGE: ROLE SELECT -->
+<div id="page-role" class="page active">
+  <div class="wrap" style="padding-top:24px">
+    <div class="card card-gold text-center" style="padding:36px 22px">
+      <div style="font-size:4.5rem">🏥</div>
+      <h1 style="font-family:var(--font-d);font-size:2.6rem;font-weight:800;margin:10px 0;letter-spacing:-.4px">DocMatch Pro</h1>
+      <p style="font-size:.88rem;color:var(--muted);margin-bottom:22px">India's Most Trusted Healthcare Platform</p>
+      <div class="grid2" style="gap:16px">
+        <div class="card" style="cursor:pointer;padding:24px 14px;border:2px solid #C7D2FE;text-align:center" onclick="setRole('patient')">
+          <div style="font-size:3rem">👤</div>
+          <div style="font-weight:800;font-size:1.05rem;margin-top:6px">I'm a Patient</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:4px">Find verified doctors</div>
         </div>
+        <div class="card" style="cursor:pointer;padding:24px 14px;border:2px solid var(--line);text-align:center" onclick="setRole('doctor')">
+          <div style="font-size:3rem">👨‍⚕️</div>
+          <div style="font-weight:800;font-size:1.05rem;margin-top:6px">I'm a Doctor</div>
+          <div style="font-size:.72rem;color:var(--muted);margin-top:4px">Grow your practice</div>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
 
-    <!-- ═══════════ HEADER ═══════════ -->
-    <header class="header">
-        <div class="logo">Doc<span>Match</span> Pro</div>
-        <div class="header-right">
-            <div class="lang-btn" onclick="showLangOverlay()">🌐 <span id="langLabel">EN</span></div>
-            <div class="role-badge patient" id="roleBadge" onclick="switchRole()">👤 Patient</div>
-            <div class="coin-badge" onclick="showPage('profile')">🪙 <span id="headerCoins">0</span></div>
+<!-- PAGE: HOME -->
+<div id="page-home" class="page">
+  <div class="wrap" style="padding-top:16px">
+    <div class="card card-gold" style="margin-bottom:16px">
+      <h1 style="font-family:var(--font-d);font-size:2.2rem;font-weight:800;line-height:1.15;margin-bottom:8px">Discover Excellence<br>in Healthcare</h1>
+      <p style="font-size:.84rem;color:var(--muted);margin-bottom:16px">Elite verified doctors · Premium matching · Seamless booking</p>
+      <div class="grid2">
+        <div class="card" style="text-align:center;padding:16px;cursor:pointer;border:1px solid var(--line)" onclick="showPage('triage')">
+          <div style="font-size:2rem">🔍</div>
+          <div style="font-weight:800;font-size:.8rem;margin-top:5px">Symptom Check</div>
         </div>
-    </header>
-
-    <!-- ═══════════ PAGES ═══════════ -->
-    <div id="page-role" class="page active container" style="padding-top:24px;">
-        <div class="card card-luxury text-center" style="padding:34px 22px;">
-            <div style="font-size:4.5rem;">🏥</div>
-            <h1 style="font-family:var(--font-display);font-size:2.6rem;font-weight:800;margin:8px 0;letter-spacing:-0.5px;">DocMatch Pro</h1>
-            <p class="text-muted mb16" style="font-size:0.9rem;">India's Most Trusted Healthcare Platform</p>
-            <div class="grid-2" style="gap:16px;">
-                <div class="card" style="cursor:pointer;padding:26px 16px;border:2px solid #c7d2fe;text-align:center;" onclick="setRole('patient')" id="patientCard">
-                    <div style="font-size:3.2rem;">👤</div><div class="fw800 mt4" style="font-size:1.15rem;">I'm a Patient</div><div class="text-muted mt4" style="font-size:0.72rem;">Find elite verified doctors</div>
-                </div>
-                <div class="card" style="cursor:pointer;padding:26px 16px;border:2px solid var(--border);text-align:center;" onclick="setRole('doctor')" id="doctorCard">
-                    <div style="font-size:3.2rem;">👨‍⚕️</div><div class="fw800 mt4" style="font-size:1.15rem;">I'm a Doctor</div><div class="text-muted mt4" style="font-size:0.72rem;">Grow your practice exponentially</div>
-                </div>
-            </div>
+        <div class="card" style="text-align:center;padding:16px;cursor:pointer;border:1px solid var(--line)" onclick="showPage('trivia')">
+          <div style="font-size:2rem">🧠</div>
+          <div style="font-weight:800;font-size:.8rem;margin-top:5px">Health Trivia</div>
+          <div style="font-size:.68rem;color:var(--muted);margin-top:2px">Earn reward coins</div>
         </div>
+      </div>
     </div>
+    <div class="sec-row"><div><div class="sec-lbl">Top Rated</div><div class="sec-title">Our Esteemed Doctors</div></div></div>
+    <div class="gap12" id="home-doc-list"></div>
+  </div>
+</div>
 
-    <!-- HOME -->
-    <div id="page-home" class="page container">
-        <div class="card card-luxury">
-            <h1 style="font-family:var(--font-display);font-size:2.2rem;font-weight:800;line-height:1.15;">Discover<br>Excellence in<br>Healthcare</h1>
-            <p class="text-muted mb14" style="font-size:0.84rem;">Elite verified doctors · Premium matching · Seamless booking</p>
-            <div class="grid-2">
-                <div class="card" style="text-align:center;padding:16px;cursor:pointer;" onclick="showPage('diagnostic')">
-                    <div style="font-size:2.2rem;">🔍</div><div class="fw800 mt4" style="font-size:0.8rem;">Smart Symptom Check</div><div class="text-muted" style="font-size:0.66rem;">Find your specialist</div>
-                </div>
-                <div class="card" style="text-align:center;padding:16px;cursor:pointer;" onclick="showPage('trivia')">
-                    <div style="font-size:2.2rem;">🧠</div><div class="fw800 mt4" style="font-size:0.8rem;">Health Trivia</div><div class="text-muted" style="font-size:0.66rem;">Earn reward coins</div>
-                </div>
-            </div>
-        </div>
-        <div class="mt14"><div class="section-title">⭐ Our Esteemed Doctors</div><div id="allDoctors"></div></div>
+<!-- PAGE: DOCTOR DASHBOARD -->
+<div id="page-doctorDashboard" class="page">
+  <div class="wrap" style="padding-top:16px">
+    <div class="card card-dark" style="margin-bottom:16px;padding:24px 20px">
+      <div style="position:relative;z-index:2;text-align:center">
+        <div style="font-size:3.5rem;margin-bottom:10px">👨‍⚕️</div>
+        <h2 style="font-family:var(--font-d);color:#FFF;font-size:1.7rem;margin-bottom:6px">Welcome, Doctor</h2>
+        <p style="color:#CBD5E1;font-size:.82rem;margin-bottom:14px">We're honoured to support your practice.</p>
+        <button class="btn btn-gold btn-full" onclick="showPage('subscription')">💎 Explore Membership</button>
+      </div>
     </div>
-
-    <!-- DOCTOR DASHBOARD -->
-    <div id="page-doctorDashboard" class="page container">
-        <div class="card card-dark text-center" style="position:relative;z-index:1;">
-            <div style="position:relative;z-index:2;">
-                <div style="font-size:3.5rem;">👨‍⚕️</div>
-                <h2 style="font-family:var(--font-display);color:white;font-size:1.6rem;">Welcome, Doctor</h2>
-                <p style="color:#cbd5e1;font-size:0.82rem;margin-bottom:6px;">We're honoured to support your practice.</p>
-                <button class="btn btn-gold btn-full mt8" onclick="showPage('subscription')">💎 Explore Membership</button>
-            </div>
-        </div>
-        
-        <!-- Persuasive Block -->
-        <div class="persuasive-block">
-            <div class="persuasive-title">A Gentle Note on Growing Your Practice</div>
-            <div class="persuasive-text">
-                We understand the dedication and sacrifice that goes into building a medical practice. 
-                You've spent years mastering your craft — now let the right patients find you effortlessly.
-                <br><br>
-                Our platform isn't just a listing. It's a bridge between your expertise and those who need it most. 
-                For a modest investment, we ensure your name reaches hundreds of searching patients every single day.
-            </div>
-        </div>
+    <div class="card card-gold" style="margin-bottom:16px">
+      <div style="font-family:var(--font-d);font-size:1.3rem;font-weight:700;color:var(--gold2);margin-bottom:10px">A Gentle Note on Growing Your Practice</div>
+      <p style="font-size:.85rem;color:#78350F;line-height:1.75">We understand the dedication that goes into building a medical practice. You've spent years mastering your craft — now let the right patients find you effortlessly. Our platform is a bridge between your expertise and those who need it most. For a modest investment, we ensure your name reaches hundreds of patients every single day.</p>
+      <button class="btn btn-gold btn-full mt14" onclick="showPage('subscription')">🚀 List My Practice</button>
     </div>
+    <div id="doc-my-listings-dash"></div>
+  </div>
+</div>
 
-    <!-- DIAGNOSTIC -->
-    <div id="page-diagnostic" class="page container">
-        <div class="card card-luxury"><div id="diagContent"></div></div>
+<!-- PAGE: TRIAGE -->
+<div id="page-triage" class="page">
+  <div class="wrap" style="padding-top:16px">
+    <div class="triage-hdr">
+      <div style="font-size:.68rem;font-weight:800;opacity:.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px" id="triage-step-lbl">Step 1 of 5</div>
+      <div style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;line-height:1.3;margin-bottom:4px" id="triage-q">What's your main health concern?</div>
+      <div style="font-size:.82rem;opacity:.82;line-height:1.5" id="triage-hint">Select the category that best matches your symptoms.</div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:20%"></div></div>
     </div>
+    <div class="triage-step active" id="ts1">
+      <div class="opt-grid">
+        <div class="opt-item" onclick="selTriageOpt(this,'concern','cardio')"><span class="opt-em">❤️</span><div class="opt-lbl">Heart &amp; Blood</div><div class="opt-sub">Chest pain, BP</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'concern','ortho')"><span class="opt-em">🦴</span><div class="opt-lbl">Bones &amp; Joints</div><div class="opt-sub">Pain, spine</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'concern','derma')"><span class="opt-em">🌿</span><div class="opt-lbl">Skin &amp; Hair</div><div class="opt-sub">Acne, rash</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'concern','neuro')"><span class="opt-em">🧠</span><div class="opt-lbl">Brain &amp; Nerves</div><div class="opt-sub">Migraine, vertigo</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'concern','pedia')"><span class="opt-em">👶</span><div class="opt-lbl">Child Health</div><div class="opt-sub">Fever, growth</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'concern','gynae')"><span class="opt-em">🌸</span><div class="opt-lbl">Women's Health</div><div class="opt-sub">Pregnancy, fertility</div></div>
+      </div>
+      <div class="triage-nav">
+        <button class="btn-back" onclick="showPage('home')">✕ Cancel</button>
+        <button class="btn-next" id="ts1-next" onclick="goTriageStep(2)" disabled>Next →</button>
+      </div>
+    </div>
+    <div class="triage-step" id="ts2">
+      <div class="gap12 mb14">
+        <div class="opt-item" onclick="selTriageList(this,'duration','today')">⚡ Just started today</div>
+        <div class="opt-item" onclick="selTriageList(this,'duration','days')">📅 A few days (2–6 days)</div>
+        <div class="opt-item" onclick="selTriageList(this,'duration','weeks')">🗓️ 1–4 weeks</div>
+        <div class="opt-item" onclick="selTriageList(this,'duration','months')">🕐 More than a month</div>
+      </div>
+      <div class="triage-nav">
+        <button class="btn-back" onclick="goTriageStep(1)">← Back</button>
+        <button class="btn-next" id="ts2-next" onclick="goTriageStep(3)" disabled>Next →</button>
+      </div>
+    </div>
+    <div class="triage-step" id="ts3">
+      <div class="opt-grid">
+        <div class="opt-item" onclick="selTriageOpt(this,'severity','mild')"><span class="opt-em">😌</span><div class="opt-lbl">Mild</div><div class="opt-sub">Minor discomfort</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'severity','moderate')"><span class="opt-em">😐</span><div class="opt-lbl">Moderate</div><div class="opt-sub">Affects daily life</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'severity','severe')"><span class="opt-em">😟</span><div class="opt-lbl">Severe</div><div class="opt-sub">Hard to function</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'severity','emergency')"><span class="opt-em">🚨</span><div class="opt-lbl">Emergency</div><div class="opt-sub">Need help now</div></div>
+      </div>
+      <div class="triage-nav">
+        <button class="btn-back" onclick="goTriageStep(2)">← Back</button>
+        <button class="btn-next" id="ts3-next" onclick="goTriageStep(4)" disabled>Next →</button>
+      </div>
+    </div>
+    <div class="triage-step" id="ts4">
+      <div class="opt-grid">
+        <div class="opt-item" onclick="selTriageOpt(this,'consult','inperson')"><span class="opt-em">🏥</span><div class="opt-lbl">In-Person</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'consult','video')"><span class="opt-em">💻</span><div class="opt-lbl">Video Call</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'consult','home')"><span class="opt-em">🏠</span><div class="opt-lbl">Home Visit</div></div>
+        <div class="opt-item" onclick="selTriageOpt(this,'consult','any')"><span class="opt-em">🤷</span><div class="opt-lbl">No Preference</div></div>
+      </div>
+      <div class="triage-nav">
+        <button class="btn-back" onclick="goTriageStep(3)">← Back</button>
+        <button class="btn-next" id="ts4-next" onclick="goTriageStep(5)" disabled>Next →</button>
+      </div>
+    </div>
+    <div class="triage-step" id="ts5">
+      <div class="card">
+        <input class="input" type="text" id="triage-city" placeholder="Your city (e.g. Deesa, Mumbai…)" oninput="checkTriageLoc()">
+        <div class="triage-nav">
+          <button class="btn-back" onclick="goTriageStep(4)">← Back</button>
+          <button class="btn-next" id="ts5-next" onclick="showTriageResults()" disabled>🔍 Find Doctors</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- TRIVIA -->
-    <div id="page-trivia" class="page container"><div class="card text-center" id="triviaBox"></div></div>
+<!-- PAGE: DIRECTORY -->
+<div id="page-directory" class="page">
+  <div class="wrap" style="padding-top:16px">
+    <div class="sec-row"><div><div class="sec-lbl" id="dir-lbl">All Specialists</div><div class="sec-title" id="dir-title">All Doctors</div></div></div>
+    <div class="gap12" id="dir-list"></div>
+  </div>
+</div>
 
-    <!-- SUBSCRIPTION -->
-    <div id="page-subscription" class="page container"><div id="subBox"></div></div>
+<!-- PAGE: SUBSCRIPTION -->
+<div id="page-subscription" class="page">
+  <div class="wrap" style="padding-top:16px">
+    <div class="card text-center" style="margin-bottom:14px">
+      <div style="font-family:var(--font-d);font-size:1.55rem;font-weight:700;margin-bottom:6px">Membership Plans</div>
+      <p style="font-size:.84rem;color:var(--muted)">Choose the plan that best supports your practice growth.</p>
+    </div>
+    <div class="card" style="background:var(--teal-lt);border:2px solid var(--teal);margin-bottom:14px;text-align:center;padding:16px">
+      <div style="font-size:1.5rem;margin-bottom:6px">🎁</div>
+      <div style="font-weight:800;color:#065F46;font-size:.92rem">First Month FREE for New Doctors</div>
+      <div style="font-size:.78rem;color:#065F46;margin-top:4px">No credit card required. Auto-activates after sign up.</div>
+    </div>
+    <div id="plans-container"></div>
+  </div>
+</div>
 
-    <!-- PROFILE -->
-    <div id="page-profile" class="page container"><div id="profileBox"></div></div>
+<!-- PAGE: PROFILE -->
+<div id="page-profile" class="page">
+  <div class="wrap" style="padding-top:16px"><div id="profile-content"></div></div>
+</div>
 
-    <!-- MODAL -->
-    <div class="modal" id="mainModal"><div class="modal-sheet" id="modalInner"></div></div>
+<!-- PAGE: CHECKOUT -->
+<div id="page-checkout" class="page">
+  <div class="wrap" style="padding-top:16px">
+    <div class="card">
+      <div class="co-doc-wrap">
+        <div class="co-doc-top">
+          <div class="co-avatar" id="co-avatar">👨‍⚕️</div>
+          <div class="co-info">
+            <div class="co-name" id="co-name"></div>
+            <div class="co-spec" id="co-spec"></div>
+            <div class="co-hosp" id="co-hosp"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sec-lbl mt14 mb8">Select Date</div>
+      <div class="hscroll" id="date-scroll"></div>
+      <div class="sec-lbl mt12 mb8">Select Time</div>
+      <div class="time-grid" id="time-grid"></div>
+      <div class="receipt-card mt16">
+        <div class="receipt-title">Booking Summary</div>
+        <div class="r-row"><span class="r-lbl">Consultation Fee</span><span class="r-val" id="rc-fee"></span></div>
+        <div class="r-row"><span class="r-lbl">Platform Fee</span><span class="r-val">₹49</span></div>
+        <div class="r-row"><span class="r-lbl">GST (18%)</span><span class="r-val" id="rc-gst"></span></div>
+        <hr class="r-div">
+        <div class="r-total"><span class="r-total-lbl">Total Payable</span><span class="r-total-val" id="rc-total"></span></div>
+      </div>
+      <div class="sec-lbl mt16 mb8">Payment Method</div>
+      <div id="pay-methods">
+        <div class="pay-item sel" onclick="selPay(this)"><span style="font-size:1.3rem">📱</span><div><div class="pay-name">UPI / PhonePe / GPay</div><div class="pay-desc">Instant via any UPI app</div></div><div class="pay-radio"></div></div>
+        <div class="pay-item" onclick="selPay(this)"><span style="font-size:1.3rem">💳</span><div><div class="pay-name">Credit / Debit Card</div><div class="pay-desc">Visa, Mastercard, Rupay</div></div><div class="pay-radio"></div></div>
+        <div class="pay-item" onclick="selPay(this)"><span style="font-size:1.3rem">🏦</span><div><div class="pay-name">Net Banking</div><div class="pay-desc">All major banks</div></div><div class="pay-radio"></div></div>
+        <div class="pay-item" onclick="selPay(this)"><span style="font-size:1.3rem">💰</span><div><div class="pay-name">Pay at Clinic</div><div class="pay-desc">Pay when you arrive</div></div><div class="pay-radio"></div></div>
+      </div>
+      <button class="btn btn-teal btn-full mt16" onclick="doPayment()">🔒 Confirm &amp; Pay <span id="pay-amt"></span></button>
+      <p class="fs-note">Secured by Razorpay · 256-bit SSL · PCI-DSS Compliant</p>
+    </div>
+  </div>
+</div>
 
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav" id="bottomNav"></nav>
+<!-- PAGE: SUCCESS -->
+<div id="page-success" class="page">
+  <div class="success-wrap">
+    <div class="success-ring">✅</div>
+    <div style="font-family:var(--font-d);font-size:2.1rem;font-weight:700;margin-bottom:9px">Booking Confirmed!</div>
+    <p style="font-size:.9rem;color:var(--muted);line-height:1.7;max-width:300px;margin-bottom:22px">Your appointment is booked. Confirmation sent to your WhatsApp &amp; email.</p>
+    <div class="conf-card">
+      <div class="conf-row"><span class="conf-lbl">Appointment ID</span><span class="conf-val" style="color:var(--plum);font-family:var(--font-d)" id="conf-id"></span></div>
+      <div class="conf-row"><span class="conf-lbl">Doctor</span><span class="conf-val" id="conf-doc"></span></div>
+      <div class="conf-row"><span class="conf-lbl">Date &amp; Time</span><span class="conf-val" id="conf-dt"></span></div>
+      <div class="conf-row"><span class="conf-lbl">Hospital</span><span class="conf-val" id="conf-hosp"></span></div>
+      <div class="conf-row"><span class="conf-lbl">Amount Paid</span><span class="conf-val" style="color:var(--teal)" id="conf-amt"></span></div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="showPage('home')">🏠 Back to Home</button>
+    <button class="btn btn-outline btn-full mt8" onclick="doShare()">📤 Share Booking</button>
+  </div>
+</div>
 
-    <script>
-        // ═══════════ CONFIGURATION ═══════════
-        // 🔑 REPLACE WITH YOUR REAL RAZORPAY KEY FROM: https://dashboard.razorpay.com
-        const RAZORPAY_KEY = 'rzp_test_YOUR_KEY_HERE';
-        
-        // Your company name
-        const COMPANY_NAME = 'DocMatch Pro';
-        
-        // ═══════════ DATABASE ═══════════
-        const DEFAULT_DOCTORS = [
-            {id:1,name:'Dr. Arvind Prajapati',spec:'Gynecology & Obstetrics',city:'Deesa',hospital:'Sharda Women Hospital',fee:750,rating:4.9,reg:'GMC-12345',verified:true,bio:'Distinguished gynecologist with 15+ years of dedicated service.',isUser:false,active:true,premium:true,expiry:null},
-            {id:2,name:'Dr. Meera Shah',spec:'Cardiology',city:'Mumbai',hospital:'HeartCare Clinic, Andheri',fee:1200,rating:4.8,reg:'MMC-67890',verified:true,bio:'Interventional cardiologist trained at Lilavati Hospital.',isUser:false,active:true,premium:false,expiry:null},
-            {id:3,name:'Dr. Akshay Patel',spec:'Gynecology & Obstetrics',city:'Palanpur',hospital:'Ganga Hospital, Palanpur',fee:600,rating:4.7,reg:'GMC-55432',verified:true,bio:'Trusted gynecologist & obstetrician at Ganga Hospital, Palanpur. Providing compassionate women\'s healthcare to the community.',isUser:false,active:true,premium:true,expiry:null},
-            {id:4,name:'Dr. Rajesh Gupta',spec:'Orthopedics',city:'Delhi',hospital:'Bone & Joint Center',fee:900,rating:4.7,reg:'DMC-11223',verified:true,bio:'Joint replacement & sports medicine specialist.',isUser:false,active:true,premium:false,expiry:null},
-            {id:5,name:'Dr. Priya Nair',spec:'Neurology',city:'Bengaluru',hospital:'NeuroCare Institute',fee:1500,rating:4.9,reg:'KMC-44556',verified:true,bio:'Stroke & migraine expert with international training.',isUser:false,active:true,premium:false,expiry:null},
-            {id:6,name:'Dr. Sunita Reddy',spec:'Pediatrics',city:'Hyderabad',hospital:'Children Care Hospital',fee:600,rating:4.8,reg:'TSMC-77889',verified:true,bio:'Beloved pediatrician specializing in newborn care.',isUser:false,active:true,premium:false,expiry:null},
-            {id:7,name:'Dr. Anand Desai',spec:'Dermatology',city:'Mumbai',hospital:'Skin Solutions, Bandra',fee:800,rating:4.6,reg:'MMC-99001',verified:true,bio:'Cosmetic dermatologist with a gentle approach.',isUser:false,active:true,premium:false,expiry:null},
-        ];
+<!-- PAGE: TRIVIA -->
+<div id="page-trivia" class="page">
+  <div class="wrap" style="padding-top:16px"><div class="card" id="trivia-box"></div></div>
+</div>
 
-        // ═══════════ TRANSLATIONS ═══════════
-        const TR = {
-            en:{patient:'I\'m a Patient',doctor:'I\'m a Doctor',findDoc:'Find elite verified doctors',growPrac:'Grow your practice exponentially',homeTitle:'Discover Excellence in Healthcare',homeSub:'Elite verified doctors · Premium matching · Seamless booking',smartCheck:'Smart Symptom Check',trivia:'Health Trivia',ourDocs:'Our Esteemed Doctors',dashWelcome:'Welcome, Doctor',dashSub:'We\'re honoured to support your practice.',exploreMember:'💎 Explore Membership',persuasiveTitle:'A Gentle Note on Growing Your Practice',persuasiveText:'We understand the dedication and sacrifice that goes into building a medical practice. You\'ve spent years mastering your craft — now let the right patients find you effortlessly. Our platform isn\'t just a listing. It\'s a bridge between your expertise and those who need it most. For a modest investment, we ensure your name reaches hundreds of searching patients every single day.',subTitle:'Membership Plans',subDesc:'Choose the plan that best supports your practice growth.',premiumLabel:'Premium Pro',basicLabel:'Basic',featureHome:'Featured on Homepage',featureBadge:'Premium Gold Badge',featurePriority:'Priority in All Searches',featureAlerts:'Booking Alerts',featureStandard:'Standard Listing',featureSearch:'Appears in Search',mostPopular:'MOST POPULAR',payBtn:'Pay via Razorpay',consent:'I confirm I am a registered medical practitioner with valid credentials.',profileTitle:'My Profile',myListings:'My Listings',noListings:'No active listings yet.',switchRole:'Switch Role',diagTitle:'Smart Symptom Check',diagStep1:'Where are you experiencing discomfort?',diagStep2:'How long have you had this?',diagStep3:'How severe is the discomfort?',diagStep4:'Any additional details?',resultTitle:'Your Specialist Match',noDoc:'No matching doctors found. Please try different selections.',booked:'Booking Confirmed!',coinValue:'1 coin = ₹0.50 discount'},
-            hi:{patient:'मैं मरीज़ हूँ',doctor:'मैं डॉक्टर हूँ',findDoc:'सर्वश्रेष्ठ डॉक्टर खोजें',growPrac:'अपनी प्रैक्टिस बढ़ाएं',homeTitle:'स्वास्थ्य सेवा में उत्कृष्टता खोजें',homeSub:'सर्वश्रेष्ठ डॉक्टर · प्रीमियम मिलान',smartCheck:'स्मार्ट लक्षण जांच',trivia:'स्वास्थ्य प्रश्नोत्तरी',ourDocs:'हमारे सम्मानित डॉक्टर',dashWelcome:'स्वागत है, डॉक्टर',dashSub:'हम आपकी प्रैक्टिस का समर्थन करने के लिए सम्मानित हैं।',exploreMember:'💎 सदस्यता देखें',persuasiveTitle:'अपनी प्रैक्टिस बढ़ाने पर एक विनम्र नोट',persuasiveText:'हम समझते हैं कि चिकित्सा पद्धति के निर्माण में कितना समर्पण और त्याग होता है। आपने वर्षों तक अपनी कला में महारत हासिल की है — अब सही मरीज़ों को सहजता से आप तक पहुँचने दें। हमारा प्लेटफ़ॉर्म केवल एक लिस्टिंग नहीं है। यह आपकी विशेषज्ञता और उन लोगों के बीच एक सेतु है जिन्हें इसकी सबसे अधिक आवश्यकता है। एक मामूली निवेश के लिए, हम सुनिश्चित करते हैं कि आपका नाम हर दिन सैकड़ों खोजी मरीज़ों तक पहुँचे।',subTitle:'सदस्यता योजनाएं',subDesc:'वह योजना चुनें जो आपके अभ्यास विकास का सर्वोत्तम समर्थन करे।',premiumLabel:'प्रीमियम प्रो',basicLabel:'बेसिक',payBtn:'रेज़रपे से भुगतान करें',consent:'मैं पुष्टि करता हूं कि मैं वैध प्रमाण-पत्रों वाला पंजीकृत चिकित्सक हूं।',profileTitle:'मेरी प्रोफ़ाइल',myListings:'मेरी लिस्टिंग',noListings:'अभी तक कोई सक्रिय लिस्टिंग नहीं।',switchRole:'भूमिका बदलें',diagTitle:'स्मार्ट लक्षण जांच',diagStep1:'आपको कहाँ असुविधा हो रही है?',diagStep2:'यह कितने समय से है?',diagStep3:'असुविधा कितनी गंभीर है?',diagStep4:'कोई अतिरिक्त विवरण?',resultTitle:'आपका विशेषज्ञ मिलान',noDoc:'कोई मिलान डॉक्टर नहीं मिला।',booked:'बुकिंग की पुष्टि!',coinValue:'1 सिक्का = ₹0.50 छूट'},
-            gu:{patient:'હું દર્દી છું',doctor:'હું ડોક્ટર છું',findDoc:'ચુનંદા ડોક્ટરો શોધો',growPrac:'તમારી પ્રેક્ટિસ વધારો',homeTitle:'આરોગ્ય સેવામાં ઉત્કૃષ્ટતા શોધો',homeSub:'ચુનંદા ડોક્ટરો · પ્રીમિયમ મેચિંગ',smartCheck:'સ્માર્ટ લક્ષણ તપાસ',trivia:'આરોગ્ય પ્રશ્નોત્તરી',ourDocs:'અમારા સન્માનિત ડોક્ટરો',dashWelcome:'સ્વાગત છે, ડોક્ટર',dashSub:'તમારી પ્રેક્ટિસને ટેકો આપવા માટે અમે સન્માનિત છીએ।',exploreMember:'💎 સભ્યપદ જુઓ',persuasiveTitle:'તમારી પ્રેક્ટિસ વધારવા પર એક નમ્ર નોંધ',persuasiveText:'અમે સમજીએ છીએ કે તબીબી પ્રેક્ટિસ બનાવવામાં કેટલું સમર્પણ અને બલિદાન જાય છે। તમે વર્ષો સુધી તમારી કળામાં નિપુણતા મેળવી છે — હવે યોગ્ય દર્દીઓને સહેલાઈથી તમારા સુધી પહોંચવા દો। અમારું પ્લેટફોર્મ માત્ર એક લિસ્ટિંગ નથી। તે તમારી કુશળતા અને જેમને તેની સૌથી વધુ જરૂર છે તેમની વચ્ચે એક સેતુ છે। એક સાધારણ રોકાણ માટે, અમે સુનિશ્ચિત કરીએ છીએ કે તમારું નામ દરરોજ સેંકડો શોધી દર્દીઓ સુધી પહોંચે।',subTitle:'સભ્યપદ યોજનાઓ',subDesc:'તમારી પ્રેક્ટિસ વૃદ્ધિને શ્રેષ્ઠ ટેકો આપતી યોજના પસંદ કરો।',premiumLabel:'પ્રીમિયમ પ્રો',basicLabel:'બેઝિક',payBtn:'રેઝરપે દ્વારા ચુકવણી',consent:'હું પુષ્ટિ કરું છું કે હું માન્ય ઓળખપત્રો સાથે નોંધાયેલ તબીબી વ્યવસાયી છું।',profileTitle:'મારી પ્રોફાઇલ',myListings:'મારી લિસ્ટિંગ',noListings:'હજી સુધી કોઈ સક્રિય લિસ્ટિંગ નથી।',switchRole:'ભૂમિકા બદલો',diagTitle:'સ્માર્ટ લક્ષણ તપાસ',diagStep1:'તમને ક્યાં અસુવિધા થઈ રહી છે?',diagStep2:'આ કેટલા સમયથી છે?',diagStep3:'અસુવિધા કેટલી ગંભીર છે?',diagStep4:'કોઈ વધારાની વિગતો?',resultTitle:'તમારા નિષ્ણાત મેચ',noDoc:'કોઈ મેળ ખાતા ડોક્ટર મળ્યા નહીં।',booked:'બુકિંગની પુષ્ટિ!',coinValue:'1 સિક્કો = ₹0.50 છૂટ'}
-        };
-        
-        let L = 'en';
-        function t(k) { return (TR[L] || TR['en'])[k] || k; }
-        
-        function selectLanguage(l) {
-            L = l; document.body.className = 'lang-' + l;
-            document.getElementById('langOverlay').classList.add('hidden');
-            document.getElementById('langLabel').textContent = l.toUpperCase();
-            localStorage.setItem('dm_lang', l); initApp();
-        }
-        function showLangOverlay() { document.getElementById('langOverlay').classList.remove('hidden'); }
-        
-        // ═══════════ DATA ═══════════
-        function getDocs() { const s = localStorage.getItem('dm_docs'); return s ? JSON.parse(s) : [...DEFAULT_DOCTORS]; }
-        function saveDocs(d) { localStorage.setItem('dm_docs', JSON.stringify(d)); }
-        function getCoins() { return parseInt(localStorage.getItem('dm_coins') || '0'); }
-        function saveCoins(c) { localStorage.setItem('dm_coins', c); updateCoins(); }
-        function getRole() { return localStorage.getItem('dm_role') || 'patient'; }
-        function setRoleDB(r) { localStorage.setItem('dm_role', r); }
-        function isTriviaDone() { return localStorage.getItem('dm_trivia') === 'true'; }
-        function setTriviaDone() { localStorage.setItem('dm_trivia', 'true'); }
-        function updateCoins() { document.getElementById('headerCoins').textContent = getCoins(); }
-        
-        function checkExpired() {
-            const docs = getDocs(); const now = new Date(); let c = false;
-            docs.forEach(d => { if (d.isUser && d.active && d.expiry && new Date(d.expiry) <= now) { d.active = false; d.premium = false; c = true; } });
-            if (c) saveDocs(docs);
-        }
-        
-        // ═══════════ ROLE ═══════════
-        function setRole(r) {
-            setRoleDB(r);
-            document.getElementById('roleBadge').textContent = r === 'patient' ? '👤 Patient' : '👨‍⚕️ Doctor';
-            document.getElementById('roleBadge').className = 'role-badge ' + (r === 'patient' ? 'patient' : 'doctor');
-            document.getElementById('bottomNav').innerHTML = r === 'doctor' ?
-                `<div class="nav-item active" data-page="doctorDashboard" onclick="showPage('doctorDashboard')"><div class="nav-icon">📊</div>Dash</div><div class="nav-item" data-page="home" onclick="showPage('home')"><div class="nav-icon">🏠</div>Home</div><div class="nav-item" data-page="subscription" onclick="showPage('subscription')"><div class="nav-icon">💎</div>Plans</div><div class="nav-item" data-page="profile" onclick="showPage('profile')"><div class="nav-icon">👤</div>Profile</div>` :
-                `<div class="nav-item active" data-page="home" onclick="showPage('home')"><div class="nav-icon">🏠</div>Home</div><div class="nav-item" data-page="diagnostic" onclick="showPage('diagnostic')"><div class="nav-icon">🔍</div>Check</div><div class="nav-item" data-page="trivia" onclick="showPage('trivia')"><div class="nav-icon">🧠</div>Trivia</div><div class="nav-item" data-page="profile" onclick="showPage('profile')"><div class="nav-icon">👤</div>Profile</div>`;
-            showPage(r === 'doctor' ? 'doctorDashboard' : 'home');
-        }
-        function switchRole() { setRole(getRole() === 'patient' ? 'doctor' : 'patient'); }
-        
-        function showPage(n) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const pg = document.getElementById('page-' + n); if (pg) pg.classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(nv => nv.classList.remove('active'));
-            document.querySelector(`.nav-item[data-page="${n}"]`)?.classList.add('active');
-            if (n === 'home' || n === 'doctorDashboard') renderHome();
-            if (n === 'trivia') renderTrivia();
-            if (n === 'profile') renderProfile();
-            if (n === 'subscription') renderSubscription();
-            if (n === 'diagnostic') renderDiagnostic();
-            window.scrollTo(0, 0);
-        }
-        
-        // ═══════════ HOME ═══════════
-        function renderHome() {
-            const docs = getDocs().filter(d => d.active);
-            document.getElementById('allDoctors').innerHTML = docs.map(d => `
-            <div class="doc-card ${d.premium?'premium':''}" onclick="bookDoc(${d.id})">
-              <div class="doc-avatar ${d.premium?'premium-av':''}">👨‍⚕️</div>
-              <div class="doc-info">
-                <div class="doc-name">${d.name} ${d.verified?'<span class="badge badge-verified">✓ VERIFIED</span>':''} ${d.premium?'<span class="badge badge-premium">👑 PREMIUM</span>':''}</div>
-                <div class="doc-meta">${d.spec} · ${d.city}</div>
-                <div class="doc-meta">⭐ ${d.rating} · 🏥 ${d.hospital}</div>
-              </div>
-              <div style="font-weight:800;color:#4338ca;font-size:0.95rem;">₹${d.fee}</div>
-            </div>`).join('');
-            updateCoins();
-        }
-        
-        // ═══════════ DIAGNOSTIC ═══════════
-        let diag = { step: 1, area: '', duration: '', severity: '', note: '', spec: '' };
-        const AREAS = [{id:'head',label:{en:'Head & Brain',hi:'सिर और मस्तिष्क',gu:'માથું અને મગજ'},emoji:'🧠',spec:'Neurology'},{id:'chest',label:{en:'Chest & Heart',hi:'छाती और हृदय',gu:'છાતી અને હૃદય'},emoji:'❤️',spec:'Cardiology'},{id:'skin',label:{en:'Skin & Hair',hi:'त्वचा और बाल',gu:'ત્વચા અને વાળ'},emoji:'🌿',spec:'Dermatology'},{id:'bones',label:{en:'Bones & Joints',hi:'हड्डियां और जोड़',gu:'હાડકાં અને સાંધા'},emoji:'🦴',spec:'Orthopedics'},{id:'women',label:{en:'Women\'s Health',hi:'महिला स्वास्थ्य',gu:'મહિલા આરોગ્ય'},emoji:'🌸',spec:'Gynecology & Obstetrics'},{id:'children',label:{en:'Child Health',hi:'बाल स्वास्थ्य',gu:'બાળ આરોગ્ય'},emoji:'👶',spec:'Pediatrics'},{id:'general',label:{en:'General',hi:'सामान्य',gu:'સામાન્ય'},emoji:'💊',spec:'General Medicine'}];
-        const DURATIONS = [{id:'today',label:{en:'Just started today',hi:'आज ही शुरू हुआ',gu:'આજે જ શરૂ થયું'},emoji:'⚡'},{id:'days',label:{en:'A few days',hi:'कुछ दिन',gu:'થોડા દિવસ'},emoji:'📅'},{id:'weeks',label:{en:'1-4 weeks',hi:'1-4 सप्ताह',gu:'1-4 અઠવાડિયા'},emoji:'🗓️'},{id:'months',label:{en:'More than a month',hi:'एक महीने से अधिक',gu:'એક મહિનાથી વધુ'},emoji:'🕐'}];
-        const SEVERITY = [{id:'mild',label:{en:'Mild',hi:'हल्का',gu:'હળવું'},emoji:'😌'},{id:'moderate',label:{en:'Moderate',hi:'मध्यम',gu:'મધ્યમ'},emoji:'😐'},{id:'severe',label:{en:'Severe',hi:'गंभीर',gu:'ગંભીર'},emoji:'😟'}];
-        
-        function renderDiagnostic() {
-            diag = { step: 1, area: '', duration: '', severity: '', note: '', spec: '' };
-            renderDiagStep();
-        }
-        
-        function renderDiagStep() {
-            let h = '';
-            if (diag.step === 1) {
-                h = `<h2 style="font-family:var(--font-display);text-align:center;">${t('diagTitle')}</h2><div class="fw800 mb8" style="font-size:1.1rem;">${t('diagStep1')}</div><div class="grid-2">${AREAS.map(a=>`<div class="card" style="text-align:center;padding:16px;cursor:pointer;" onclick="selDiag('area','${a.id}','${a.spec}')"><div style="font-size:2.2rem;">${a.emoji}</div><div class="fw700">${a.label[L]||a.label.en}</div></div>`).join('')}</div>`;
-            } else if (diag.step === 2) {
-                h = `<div class="fw800 mb8" style="font-size:1.1rem;">${t('diagStep2')}</div><div class="grid-2">${DURATIONS.map(d=>`<div class="card" style="text-align:center;padding:16px;cursor:pointer;" onclick="selDiag('duration','${d.id}')"><div style="font-size:2rem;">${d.emoji}</div><div class="fw700">${d.label[L]||d.label.en}</div></div>`).join('')}</div><button class="btn btn-outline btn-full mt8" onclick="diag.step=1;renderDiagStep();">← Back</button>`;
-            } else if (diag.step === 3) {
-                h = `<div class="fw800 mb8" style="font-size:1.1rem;">${t('diagStep3')}</div><div class="grid-2">${SEVERITY.map(s=>`<div class="card" style="text-align:center;padding:16px;cursor:pointer;" onclick="selDiag('severity','${s.id}')"><div style="font-size:2rem;">${s.emoji}</div><div class="fw700">${s.label[L]||s.label.en}</div></div>`).join('')}</div><button class="btn btn-outline btn-full mt8" onclick="diag.step=2;renderDiagStep();">← Back</button>`;
-            } else if (diag.step === 4) {
-                h = `<div class="fw800 mb8" style="font-size:1.1rem;">${t('diagStep4')}</div><textarea class="input" id="diagNote" placeholder="Any additional details..."></textarea><div class="grid-2 mt8"><button class="btn btn-outline" onclick="diag.step=3;renderDiagStep();">← Back</button><button class="btn btn-primary" onclick="finishDiag()">🔍 Find My Doctor</button></div>`;
-            } else {
-                showDiagResult(); return;
-            }
-            document.getElementById('diagContent').innerHTML = h;
-            if (diag.step === 4) document.getElementById('diagNote')?.focus();
-        }
-        
-        function selDiag(key, val, spec) { diag[key] = val; if (spec) diag.spec = spec; diag.step++; if (diag.step > 4) finishDiag(); else renderDiagStep(); }
-        
-        function finishDiag() { diag.note = document.getElementById('diagNote')?.value || ''; diag.step = 5; renderDiagStep(); }
-        
-        function showDiagResult() {
-            const docs = getDocs().filter(d => d.active && d.spec === diag.spec);
-            document.getElementById('diagContent').innerHTML = `
-            <div class="fw800 mb8" style="font-size:1.15rem;color:#4338ca;">${t('resultTitle')}</div>
-            ${docs.length>0?docs.map(d=>`<div class="doc-card ${d.premium?'premium':''}" onclick="bookDoc(${d.id})"><div class="doc-avatar ${d.premium?'premium-av':''}">👨‍⚕️</div><div class="doc-info"><div class="doc-name">${d.name} ${d.premium?'<span class="badge badge-premium">👑</span>':''}</div><div class="doc-meta">${d.spec}·${d.city}·⭐${d.rating}</div><div class="doc-meta">🏥 ${d.hospital}</div></div><div style="font-weight:800;color:#4338ca;">₹${d.fee}</div></div>`).join(''):`<p class="text-muted text-center">${t('noDoc')}</p>`}
-            <button class="btn btn-outline btn-full mt12" onclick="renderDiagnostic()">🔄 New Check</button>`;
-        }
-        
-        // ═══════════ BOOKING ═══════════
-        function bookDoc(id) {
-            const d = getDocs().find(x => x.id === id); if (!d || !d.active) return alert('Unavailable.');
-            const coins = getCoins(); const disc = Math.min(coins * 0.5, d.fee * 0.5);
-            const total = d.fee - disc + 49 + Math.round((d.fee - disc + 49) * 0.18);
-            const opts = {
-                key: RAZORPAY_KEY, amount: Math.round(total * 100), currency: 'INR',
-                name: COMPANY_NAME, description: `Consultation: ${d.name}`,
-                handler: r => { if (disc > 0) saveCoins(getCoins() - Math.floor(disc / 0.5)); alert(`✅ ${t('booked')}\n\nID: ${r.razorpay_payment_id}\nDoctor: ${d.name}\nAmount: ₹${total}`); },
-                prefill: { name: 'Patient' }, theme: { color: '#4f46e5' }
-            };
-            try { new Razorpay(opts).open(); } catch (e) { if (confirm(`Demo: Pay ₹${total}?`)) { if (disc > 0) saveCoins(getCoins() - Math.floor(disc / 0.5)); alert('✅ Done! (Demo)'); } }
-        }
-        
-        // ═══════════ TRIVIA ═══════════
-        const TRIVIA = [{q:{en:'Normal resting heart rate?',hi:'सामान्य विश्राम हृदय गति?',gu:'સામાન્ય આરામ હૃદય દર?'},o:{en:['40-60','60-100','100-140','140-180'],hi:['40-60','60-100','100-140','140-180'],gu:['40-60','60-100','100-140','140-180']},c:1},{q:{en:'Sunshine vitamin?',hi:'धूप का विटामिन?',gu:'સૂર્યપ્રકાશનું વિટામિન?'},o:{en:['A','B12','C','D'],hi:['A','B12','C','D'],gu:['A','B12','C','D']},c:3},{q:{en:'Bones in adult body?',hi:'वयस्क शरीर में हड्डियां?',gu:'પુખ્ત શરીરમાં હાડકાં?'},o:{en:['156','206','256','306'],hi:['156','206','256','306'],gu:['156','206','256','306']},c:1}];
-        let ct = { i: 0, s: 0, a: false };
-        
-        function renderTrivia() {
-            const b = document.getElementById('triviaBox');
-            if (isTriviaDone()) { b.innerHTML = `<div style="font-size:3.5rem;">🏆</div><div class="fw800" style="font-size:1.2rem;">Trivia Complete!</div><p>You earned ${localStorage.getItem('dm_trivia_earned')||0} coins.</p><button class="btn btn-primary btn-full mt8" onclick="showPage('home')">Home</button>`; return; }
-            ct = { i: 0, s: 0, a: false }; showTQ();
-        }
-        function showTQ() {
-            const q = TRIVIA[ct.i];
-            document.getElementById('triviaBox').innerHTML = `<h2 style="font-family:var(--font-display);">🧠 Health Trivia</h2><div class="card card-luxury"><div style="color:#7c3aed;font-weight:800;">Q${ct.i+1}/3</div><div class="fw800 mt8">${q.q[L]||q.q.en}</div><div class="mt12">${(q.o[L]||q.o.en).map((o,i)=>`<div style="background:white;border:2px solid var(--border);border-radius:50px;padding:12px;margin:5px 0;cursor:pointer;font-weight:600;" onclick="answerT(${i})">${o}</div>`).join('')}</div><div id="tf" class="mt8 fw800"></div></div><button class="btn btn-primary btn-full mt8" id="tn" style="display:none;" onclick="nextT()">Next</button>`;
-        }
-        function answerT(s) { if (ct.a) return; ct.a = true; const q = TRIVIA[ct.i]; const opts = document.querySelectorAll('#triviaBox div[style*="cursor:pointer"]'); if (s === q.c) { opts[s].style.borderColor = '#10b981'; opts[s].style.background = '#d1fae5'; ct.s += 2; document.getElementById('tf').innerHTML = '✅ +2 coins!'; } else { opts[s].style.borderColor = '#ef4444'; opts[q.c].style.borderColor = '#10b981'; opts[q.c].style.background = '#d1fae5'; document.getElementById('tf').innerHTML = '❌'; } if (ct.i < 2) document.getElementById('tn').style.display = 'block'; else { setTriviaDone(); localStorage.setItem('dm_trivia_earned', ct.s); saveCoins(getCoins() + ct.s); renderTrivia(); } }
-        function nextT() { ct.i++; ct.a = false; showTQ(); }
-        
-        // ═══════════ SUBSCRIPTION ═══════════
-        function renderSubscription() {
-            document.getElementById('subBox').innerHTML = `
-            <div class="card text-center"><h2 style="font-family:var(--font-display);">${t('subTitle')}</h2><p class="text-muted">${t('subDesc')}</p></div>
-            <div class="persuasive-block"><div class="persuasive-title">${t('persuasiveTitle')}</div><div class="persuasive-text">${t('persuasiveText')}</div></div>
-            <div class="plan-card featured" onclick="openDocForm('premium')">
-              <div style="font-size:2.8rem;">💎</div><div class="fw800" style="font-size:1.3rem;">${t('premiumLabel')}</div>
-              <div class="plan-price mt4">₹799<span>/month</span></div>
-              <div class="feature-list"><div class="feature-item"><span class="check">✓</span> ${t('featureHome')}</div><div class="feature-item"><span class="check">✓</span> ${t('featureBadge')}</div><div class="feature-item"><span class="check">✓</span> ${t('featurePriority')}</div><div class="feature-item"><span class="check">✓</span> ${t('featureAlerts')}</div></div>
-              <button class="btn btn-gold btn-full mt8" onclick="openDocForm('premium')">✨ Get Premium Pro</button>
-            </div>
-            <div class="plan-card" onclick="openDocForm('basic')">
-              <div style="font-size:2.2rem;">📋</div><div class="fw800" style="font-size:1.15rem;">${t('basicLabel')}</div>
-              <div class="plan-price mt4">₹300<span>/month</span></div>
-              <div class="feature-list"><div class="feature-item"><span class="check">✓</span> ${t('featureStandard')}</div><div class="feature-item"><span class="check">✓</span> ${t('featureSearch')}</div></div>
-              <button class="btn btn-outline btn-full mt8" onclick="openDocForm('basic')">Select Basic</button>
-            </div>`;
-        }
-        
-        let selPlan = 'premium';
-        function openDocForm(p) {
-            selPlan = p; const price = p === 'premium' ? 799 : 300;
-            document.getElementById('modalInner').innerHTML = `
-            <div class="modal-handle"></div>
-            <h2 style="font-family:var(--font-display);text-align:center;">📋 List Your Practice</h2>
-            <p class="text-muted text-center mb8">${p==='premium'?'👑 Premium Pro · ₹799/month':'📋 Basic · ₹300/month'}</p>
-            <input class="input" id="dn" placeholder="Full Name with Credentials"><input class="input" id="dr" placeholder="Registration Number (e.g., MCI-12345)">
-            <select class="input" id="ds"><option value="">Select Specialty</option><option>Cardiology</option><option>Dermatology</option><option>Gynecology & Obstetrics</option><option>Neurology</option><option>Orthopedics</option><option>Pediatrics</option><option>General Medicine</option></select>
-            <select class="input" id="dc"><option value="">Select City</option><option>Mumbai</option><option>Delhi</option><option>Bengaluru</option><option>Hyderabad</option><option>Ahmedabad</option><option>Palanpur</option><option>Deesa</option><option>Surat</option></select>
-            <input class="input" id="dh" placeholder="Hospital / Clinic Name"><input class="input" id="df" placeholder="Consultation Fee (₹)" type="number">
-            <textarea class="input" id="dbio" placeholder="Brief professional bio..."></textarea>
-            <div class="consent-row"><input type="checkbox" id="consent"><label>${t('consent')}</label></div>
-            <div style="background:#fef3c7;padding:14px;border-radius:16px;margin:12px 0;text-align:center;">💰 <b>${p==='premium'?'Premium Pro':'Basic'}: ₹${price}/month</b><br><small style="color:#78350f;">Auto-renews monthly. Cancel anytime from your profile.</small></div>
-            <button class="btn btn-gold btn-full" onclick="registerDoc()">💳 ${t('payBtn')} — ₹${price}</button>
-            <button class="btn btn-outline btn-full mt8" onclick="closeModal()">Cancel</button>`;
-            document.getElementById('mainModal').classList.add('active');
-        }
-        function closeModal() { document.getElementById('mainModal').classList.remove('active'); }
-        
-        function registerDoc() {
-            const n = document.getElementById('dn').value.trim(); const r = document.getElementById('dr').value.trim();
-            const s = document.getElementById('ds').value; const c = document.getElementById('dc').value;
-            const h = document.getElementById('dh').value.trim(); const f = document.getElementById('df').value.trim();
-            const b = document.getElementById('dbio').value.trim();
-            if (!n || !s || !c || !h || !f || !document.getElementById('consent').checked) return alert('Please complete all fields.');
-            const price = selPlan === 'premium' ? 799 : 300;
-            const opts = { key: RAZORPAY_KEY, amount: price * 100, currency: 'INR', name: COMPANY_NAME, description: `${selPlan==='premium'?'Premium Pro':'Basic'} Listing`, handler: resp => { const docs = getDocs(); const exp = new Date(); exp.setDate(exp.getDate() + 30); docs.push({ id: Date.now(), name: n, spec: s, city: c, hospital: h, fee: parseInt(f), reg: r, verified: true, bio: b, isUser: true, active: true, premium: selPlan === 'premium', plan: selPlan, expiry: exp.toISOString() }); saveDocs(docs); closeModal(); alert(`✅ Listing Active!\n\nExpires: ${exp.toLocaleDateString()}\nPlan: ${selPlan==='premium'?'👑 Premium Pro':'📋 Basic'}`); renderHome(); renderProfile(); }, prefill: { name: n }, theme: { color: '#4f46e5' } };
-            try { new Razorpay(opts).open(); } catch (e) { if (confirm(`Demo: Activate ${selPlan==='premium'?'Premium Pro (₹799)':'Basic (₹300)'}?`)) { const docs = getDocs(); const exp = new Date(); exp.setDate(exp.getDate() + 30); docs.push({ id: Date.now(), name: n, spec: s, city: c, hospital: h, fee: parseInt(f), reg: r, verified: true, bio: b, isUser: true, active: true, premium: selPlan === 'premium', plan: selPlan, expiry: exp.toISOString() }); saveDocs(docs); closeModal(); alert('✅ Active! (Demo)'); renderHome(); renderProfile(); } }
-        }
-        
-        // ═══════════ PROFILE ═══════════
-        function renderProfile() {
-            const docs = getDocs(); const my = docs.filter(d => d.isUser); const role = getRole();
-            document.getElementById('profileBox').innerHTML = `
-            <div class="profile-hero">
-              <div class="avatar-ring"><div class="avatar-inner">${role==='patient'?'👤':'👨‍⚕️'}</div></div>
-              <div class="profile-name">${role==='patient'?'Patient':'Doctor'}</div>
-              <div class="profile-tag ${role==='patient'?'patient-tag':'doctor-tag'}">${role==='patient'?'Health Seeker':'Medical Practitioner'}</div>
-              <div class="stat-row"><div class="stat-item"><div class="stat-val">🪙 ${getCoins()}</div><div class="stat-lbl">Coins</div></div><div class="stat-item"><div class="stat-val">${my.length}</div><div class="stat-lbl">Listings</div></div><div class="stat-item"><div class="stat-val">0</div><div class="stat-lbl">Bookings</div></div></div>
-            </div>
-            <div class="card"><h3 style="font-family:var(--font-display);">${t('myListings')}</h3>${my.length>0?my.map(d=>`<div class="doc-card"><div class="doc-avatar">👨‍⚕️</div><div class="doc-info"><div class="doc-name">${d.name} ${d.premium?'<span class="badge badge-premium">👑</span>':''}</div><div class="doc-meta">${d.spec}·${d.city}·${d.active?'Active':'Expired'}</div></div></div>`).join(''):`<p class="text-muted text-center">${t('noListings')}</p>`}</div>
-            <button class="btn btn-outline btn-full mt8" onclick="switchRole()">🔄 ${t('switchRole')}</button>`;
-        }
-        
-        // ═══════════ INIT ═══════════
-        function initApp() {
-            checkExpired(); updateCoins();
-            const role = getRole();
-            document.getElementById('roleBadge').textContent = role === 'patient' ? '👤 Patient' : '👨‍⚕️ Doctor';
-            document.getElementById('roleBadge').className = 'role-badge ' + (role === 'patient' ? 'patient' : 'doctor');
-            setRole(role);
-            setInterval(checkExpired, 60000);
-        }
-        
-        document.getElementById('mainModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-        const savedLang = localStorage.getItem('dm_lang');
-        if (savedLang) { selectLanguage(savedLang); } else { document.getElementById('langOverlay').classList.remove('hidden'); }
-    </script>
-    <
+<!-- BOTTOM NAV -->
+<nav class="bot-nav" id="bot-nav" style="display:none"></nav>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+<script>
+/* ── RAZORPAY KEY: Replace with yours from https://dashboard.razorpay.com ── */
+const RZP_KEY = 'rzp_test_YOUR_KEY_HERE';
+const COMPANY = 'DocMatch Pro';
 
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCJPt74uBMsF3icEtWhQrgzq2jXsOruVoE",
-  authDomain: "find-my-doctor-51d30.firebaseapp.com",
-  projectId: "find-my-doctor-51d30",
-  storageBucket: "find-my-doctor-51d30.firebasestorage.app",
-  messagingSenderId: "490743986459",
-  appId: "1:490743986459:web:c17bd441b51a58fa1c3bbe",
-  measurementId: "G-SXMJ4ELYVX"
-};
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const provider = new GoogleAuthProvider();
-
-window.googleLogin = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    alert("Welcome " + user.displayName);
-
-  } catch (error) {
-    alert(error.message);
+/* ── TRANSLATIONS ── */
+const TR = {
+  en:{
+    iAmPatient:"I'm a Patient",iAmDoctor:"I'm a Doctor",
+    homeTitle:"Discover Excellence in Healthcare",
+    symptomCheck:"Symptom Check",healthTrivia:"Health Trivia",earnCoins:"Earn reward coins",
+    ourDoctors:"Our Esteemed Doctors",welcomeDoc:"Welcome, Doctor",
+    exploreMembership:"💎 Explore Membership",listPractice:"🚀 List My Practice",
+    membershipPlans:"Membership Plans",
+    freeTrialTitle:"First Month FREE for New Doctors",
+    signIn:"Sign In / Register",signInGoogle:"Continue with Google",
+    orEmail:"or use email",emailPlaceholder:"Email address",passPlaceholder:"Password",
+    signInBtn:"Sign In",registerBtn:"Register",
+    myProfile:"My Profile",myListings:"My Listings",noListings:"No active listings yet.",
+    switchRole:"Switch Role",signOut:"Sign Out",
+    bookNow:"Book Now",available:"Available Today",busy:"Busy",
+    bestChoice:"⭐ Best Choice",premium:"👑 Premium",verified:"✅ NMC Verified",
+    planPremium:"Premium Pro",planBasic:"Basic",
+    featureHome:"Featured on Homepage",featureBadge:"Premium Gold Badge",
+    featurePriority:"Priority in All Searches",featureAlerts:"Booking Alerts & Reminders",
+    featureStandard:"Standard Listing",featureSearch:"Appears in Search",
+    payRazorpay:"Pay via Razorpay",
+    consentText:"I confirm I am a registered medical practitioner with valid credentials and agree to the Terms of Service.",
+    listingActive:"Active until",listingExpired:"Expired",
+    triviaComplete:"Trivia Complete!",triviaEarned:"You earned",triviaCoins:"coins!",
+    nextQuestion:"Next Question",backHome:"Back to Home"
+  },
+  hi:{
+    iAmPatient:"मैं मरीज़ हूँ",iAmDoctor:"मैं डॉक्टर हूँ",
+    homeTitle:"स्वास्थ्य सेवा में उत्कृष्टता खोजें",
+    symptomCheck:"लक्षण जांच",healthTrivia:"स्वास्थ्य प्रश्नोत्तरी",earnCoins:"सिक्के कमाएं",
+    ourDoctors:"हमारे सम्मानित डॉक्टर",welcomeDoc:"स्वागत है, डॉक्टर",
+    exploreMembership:"💎 सदस्यता देखें",listPractice:"🚀 प्रैक्टिस सूचीबद्ध करें",
+    membershipPlans:"सदस्यता योजनाएं",
+    freeTrialTitle:"नए डॉक्टरों के लिए पहला महीना मुफ़्त",
+    signIn:"साइन इन / रजिस्टर",signInGoogle:"Google से जारी रखें",
+    orEmail:"या ईमेल का उपयोग करें",emailPlaceholder:"ईमेल पता",passPlaceholder:"पासवर्ड",
+    signInBtn:"साइन इन",registerBtn:"रजिस्टर",
+    myProfile:"मेरी प्रोफ़ाइल",myListings:"मेरी लिस्टिंग",noListings:"अभी तक कोई लिस्टिंग नहीं।",
+    switchRole:"भूमिका बदलें",signOut:"साइन आउट",
+    bookNow:"अभी बुक करें",available:"उपलब्ध",busy:"व्यस्त",
+    bestChoice:"⭐ सर्वश्रेष्ठ विकल्प",premium:"👑 प्रीमियम",verified:"✅ NMC सत्यापित",
+    planPremium:"प्रीमियम प्रो",planBasic:"बेसिक",
+    featureHome:"होमपेज पर फ़ीचर",featureBadge:"प्रीमियम गोल्ड बैज",
+    featurePriority:"सभी खोजों में प्राथमिकता",featureAlerts:"बुकिंग अलर्ट",
+    featureStandard:"मानक लिस्टिंग",featureSearch:"खोज में दिखाई देता है",
+    payRazorpay:"रेज़रपे से भुगतान करें",
+    consentText:"मैं पुष्टि करता हूं कि मैं वैध प्रमाण-पत्रों वाला पंजीकृत चिकित्सक हूं।",
+    listingActive:"सक्रिय",listingExpired:"समाप्त",
+    triviaComplete:"प्रश्नोत्तरी पूर्ण!",triviaEarned:"आपने अर्जित किए",triviaCoins:"सिक्के!",
+    nextQuestion:"अगला प्रश्न",backHome:"होम पर वापस"
+  },
+  gu:{
+    iAmPatient:"હું દર્દી છું",iAmDoctor:"હું ડોક્ટર છું",
+    homeTitle:"આરોગ્ય સેવામાં ઉત્કૃષ્ટતા શોધો",
+    symptomCheck:"લક્ષણ તપાસ",healthTrivia:"આરોગ્ય પ્રશ્નોત્તરી",earnCoins:"સિક્કા કમાઓ",
+    ourDoctors:"અમારા સન્માનિત ડોક્ટરો",welcomeDoc:"સ્વાગત છે, ડોક્ટર",
+    exploreMembership:"💎 સભ્યપદ જુઓ",listPractice:"🚀 પ્રેક્ટિસ સૂચિબદ્ધ કરો",
+    membershipPlans:"સભ્યપદ યોજનાઓ",
+    freeTrialTitle:"નવા ડોક્ટરો માટે પ્રથમ મહિનો મફત",
+    signIn:"સાઇન ઇન / રજિસ્ટર",signInGoogle:"Google સાથે ચાલુ રાખો",
+    orEmail:"અથવા ઇમેઇલ વાપરો",emailPlaceholder:"ઇમેઇલ સરનામું",passPlaceholder:"પાસવર્ડ",
+    signInBtn:"સાઇન ઇન",registerBtn:"રજિસ્ટર",
+    myProfile:"મારી પ્રોફાઇલ",myListings:"મારી લિસ્ટિંગ",noListings:"હજી સુધી કોઈ લિસ્ટિંગ નથી।",
+    switchRole:"ભૂમિકા બદલો",signOut:"સાઇન આઉટ",
+    bookNow:"હમણાં બુક કરો",available:"ઉપલબ્ધ",busy:"વ્યસ્ત",
+    bestChoice:"⭐ શ્રેષ્ઠ પસંદ",premium:"👑 પ્રીમિયમ",verified:"✅ NMC ચકાસાયેલ",
+    planPremium:"પ્રીમિયમ પ્રો",planBasic:"બેઝિક",
+    featureHome:"હોમપેજ પર ફીચર",featureBadge:"પ્રીમિયમ ગોલ્ડ બેજ",
+    featurePriority:"તમામ શોધમાં પ્રાથમિકતા",featureAlerts:"બુકિંગ એલર્ટ",
+    featureStandard:"માનક લિસ્ટિંગ",featureSearch:"શોધમાં દેખાય છે",
+    payRazorpay:"રેઝરપે દ્વારા ચુકવણી",
+    consentText:"હું પુષ્ટિ કરું છું કે હું માન્ય ઓળખપત્રો સાથે નોંધાયેલ તબીબી વ્યવસાયી છું।",
+    listingActive:"સક્રિય",listingExpired:"સમાપ્ત",
+    triviaComplete:"પ્રશ્નોત્તરી પૂર્ણ!",triviaEarned:"તમે કમાયા",triviaCoins:"સિક્કા!",
+    nextQuestion:"આગળનો પ્રશ્ન",backHome:"હોમ પર પાછા"
   }
 };
+let LANG='en';
+function t(k){return(TR[LANG]||TR.en)[k]||k;}
 
+/* ── SEED DOCTORS ── */
+const SEED_DOCTORS=[
+  {id:'doc_arvind',name:'Dr. Arvind Prajapati',spec:'Gynecology & Obstetrics',key:'gynae',
+   deg:'MBBS – Vijay Medical College · MS – Versus Hospital, Ahmedabad',
+   exp:'OPD: Mon–Sat, 10:00 AM – 6:00 PM',fee:750,rating:4.8,available:true,
+   city:'Deesa',hospital:'Sharda Women Hospital',address:'Deesa, Banaskantha, Gujarat 385535',
+   phone:'+917778828027',verified:true,premium:false,bestChoice:false,isUser:false,active:true},
+  {id:'doc_akshay',name:'Dr. Akshay Patel',spec:'Gynecology & Obstetrics',key:'gynae',
+   deg:'MBBS, MS (Gynecology & Obstetrics) – Palanpur Medical College',
+   exp:'OPD: Mon–Sat, 9:00 AM – 7:00 PM',fee:2000,rating:4.9,available:true,
+   city:'Palanpur',hospital:'Ganga Hospital',address:'Palanpur, Banaskantha, Gujarat 385001',
+   phone:'+91XXXXXXXXXX',verified:true,premium:true,bestChoice:true,isUser:false,active:true},
+  {id:'doc_meera',name:'Dr. Meera Shah',spec:'Cardiology',key:'cardio',
+   deg:'MD Cardiology – Lilavati Hospital, Mumbai',
+   exp:'OPD: Mon–Fri, 11:00 AM – 5:00 PM',fee:1200,rating:4.8,available:true,
+   city:'Mumbai',hospital:'HeartCare Clinic, Andheri',address:'Andheri West, Mumbai, Maharashtra',
+   phone:'+91XXXXXXXXXX',verified:true,premium:false,bestChoice:false,isUser:false,active:true},
+  {id:'doc_rajesh',name:'Dr. Rajesh Gupta',spec:'Orthopedics',key:'ortho',
+   deg:'MS Orthopedics – AIIMS, Delhi',
+   exp:'OPD: Tue–Sat, 10:00 AM – 4:00 PM',fee:900,rating:4.7,available:true,
+   city:'Delhi',hospital:'Bone & Joint Center',address:'South Delhi, Delhi',
+   phone:'+91XXXXXXXXXX',verified:true,premium:false,bestChoice:false,isUser:false,active:true}
+];
+
+/* ── DATES & TIMES ── */
+const DATES=Array.from({length:7},(_,i)=>{
+  const d=new Date();d.setDate(d.getDate()+i+1);
+  return{day:d.toLocaleDateString('en-IN',{weekday:'short'}),num:d.getDate(),
+    full:d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})};
+});
+const TIMES=['09:00 AM','09:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM',
+             '02:00 PM','02:30 PM','03:00 PM','04:00 PM','04:30 PM','05:00 PM'];
+const BUSY_TIMES=[1,4,9];
+
+/* ── TRIVIA ── */
+const TRIVIA=[
+  {q:{en:'Normal resting heart rate?',hi:'सामान्य विश्राम हृदय गति?',gu:'સામાન્ય આરામ હૃદય દર?'},
+   o:['40–60 bpm','60–100 bpm','100–140 bpm','140–180 bpm'],c:1},
+  {q:{en:'Which vitamin comes from sunlight?',hi:'कौन सा विटामिन धूप से आता है?',gu:'સૂર્ય કયું વિટામિન આપે?'},
+   o:['Vitamin A','Vitamin B12','Vitamin C','Vitamin D'],c:3},
+  {q:{en:'How many bones in the adult body?',hi:'वयस्क शरीर में कितनी हड्डियां?',gu:'પુખ્ત શરીરમાં કેટલા હાડકાં?'},
+   o:['156','206','256','306'],c:1},
+  {q:{en:'What percentage of blood is plasma?',hi:'रक्त का कितना % प्लाज्मा है?',gu:'લોહીમાં પ્લાઝ્માની %?'},
+   o:['35%','45%','55%','65%'],c:2}
+];
+
+/* ── TRIAGE CONFIG ── */
+const TRIAGE_CFG=[
+  {q:"What's your main health concern?",hint:"Select the category that best matches your symptoms.",pct:'20%'},
+  {q:"How long have you had these symptoms?",hint:"Duration helps assess urgency.",pct:'40%'},
+  {q:"How severe are the symptoms?",hint:"This determines the care priority.",pct:'60%'},
+  {q:"How would you prefer to consult?",hint:"Choose the most convenient option.",pct:'80%'},
+  {q:"Where are you located?",hint:"We'll find the best doctors near you.",pct:'100%'},
+];
+
+/* ── APP STATE ── */
+let S={
+  role:'patient',currentUser:null,userProfile:null,
+  activeDoc:null,selDate:'',selTime:'',
+  triageAnswers:{},triageStep:1,
+  triviaIndex:0,triviaScore:0,triviaAnswered:false
+};
+
+/* ── LANGUAGE ── */
+function selectLang(l){
+  LANG=l;document.body.className='lang-'+l;
+  document.getElementById('lang-lbl').textContent=l.toUpperCase();
+  document.getElementById('lang-overlay').classList.add('gone');
+  localStorage.setItem('dm_lang',l);
+}
+
+/* ── COINS ── */
+function getCoins(){return parseInt(localStorage.getItem('dm_coins')||'0');}
+function saveCoins(c){localStorage.setItem('dm_coins',c);document.getElementById('hdr-coins').textContent=c;}
+
+/* ── GET DOCTORS ── */
+function getDoctors(){
+  const stored=localStorage.getItem('dm_user_doctors');
+  const userDocs=stored?JSON.parse(stored):[];
+  return[...SEED_DOCTORS,...userDocs];
+}
+
+/* ── RENDER DOCTORS ── */
+function renderDoctors(list,targetId){
+  const docs=(list||getDoctors()).filter(d=>d.active);
+  const id=targetId||(document.getElementById('page-home').classList.contains('active')?'home-doc-list':'dir-list');
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=docs.map(d=>`
+    <div class="doc-card${d.bestChoice?' best-choice':''}" onclick="openCheckout('${d.id}')">
+      ${d.bestChoice?`<div style="background:linear-gradient(135deg,#D97706,#F59E0B);padding:8px 14px;display:flex;align-items:center;justify-content:space-between">
+        <span style="color:#FFF;font-size:.72rem;font-weight:900">⭐ ${t('bestChoice')}</span>
+        <span class="badge badge-best">${t('premium')}</span></div>`:''}
+      <div class="doc-card-top">
+        <div class="doc-avatar-wrap">👨‍⚕️</div>
+        <div class="doc-info">
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px">
+            ${d.verified?`<span class="badge badge-green">${t('verified')}</span>`:''}
+            ${d.premium&&!d.bestChoice?`<span class="badge badge-gold">${t('premium')}</span>`:''}
+            ${!d.verified&&d.isUser?`<span class="badge badge-plum">⏳ Pending Verification</span>`:''}
+          </div>
+          <div class="doc-name">${d.name}</div>
+          <div class="doc-deg">${d.deg}</div>
+          <div class="doc-spec">${d.spec}</div>
+          <div class="doc-exp">📍 ${d.city} · ${d.exp}</div>
+        </div>
+      </div>
+      <div class="doc-bottom">
+        <div>
+          <div class="doc-hosp">🏥 ${d.hospital}</div>
+          <div style="font-size:.72rem;margin-top:3px">⭐ ${d.rating} &nbsp;·&nbsp;
+            <span style="color:${d.available?'var(--teal)':'var(--red)'}">${d.available?t('available'):t('busy')}</span>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div class="doc-price">₹${d.fee}</div>
+          <button class="btn btn-primary btn-sm mt8" onclick="event.stopPropagation();openCheckout('${d.id}')">${t('bookNow')}</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── PAGES ── */
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg=document.getElementById('page-'+name);
+  if(pg){pg.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  const tabMap={home:'nt-home',triage:'nt-triage',subscription:'nt-plans',profile:'nt-profile',
+    doctorDashboard:'nt-home',directory:'nt-triage'};
+  const at=document.getElementById(tabMap[name]);if(at)at.classList.add('active');
+  if(name==='home'||name==='directory')renderDoctors();
+  if(name==='profile')renderProfile();
+  if(name==='subscription')renderPlans();
+  if(name==='triage')resetTriage();
+  if(name==='trivia')renderTrivia();
+  if(name==='doctorDashboard')renderDocDash();
+}
+
+/* ── ROLE ── */
+function setRole(r){
+  S.role=r;localStorage.setItem('dm_role',r);
+  const pill=document.getElementById('role-pill');
+  pill.textContent=r==='patient'?'👤 Patient':'👨‍⚕️ Doctor';
+  pill.className='role-pill '+(r==='patient'?'patient':'doctor');
+  document.getElementById('main-header').style.display='flex';
+  document.getElementById('bot-nav').style.display='flex';
+  setupNav(r);
+  showPage(r==='patient'?'home':'doctorDashboard');
+}
+function switchRole(){setRole(S.role==='patient'?'doctor':'patient');}
+function setupNav(r){
+  const nav=document.getElementById('bot-nav');
+  if(r==='doctor'){
+    nav.innerHTML=`
+      <div class="nav-tab" id="nt-home" onclick="showPage('doctorDashboard')"><div class="ni">📊</div><span>Dash</span></div>
+      <div class="nav-tab" id="nt-triage" onclick="showPage('home')"><div class="ni">🏠</div><span>Home</span></div>
+      <div class="nav-tab" id="nt-plans" onclick="showPage('subscription')"><div class="ni">💎</div><span>Plans</span></div>
+      <div class="nav-tab" id="nt-profile" onclick="showPage('profile')"><div class="ni">👤</div><span>Profile</span></div>`;
+  }else{
+    nav.innerHTML=`
+      <div class="nav-tab" id="nt-home" onclick="showPage('home')"><div class="ni">🏠</div><span>Home</span></div>
+      <div class="nav-tab" id="nt-triage" onclick="showPage('triage')"><div class="ni">🔍</div><span>Check</span></div>
+      <div class="nav-tab" id="nt-plans" onclick="showPage('subscription')"><div class="ni">💎</div><span>Plans</span></div>
+      <div class="nav-tab" id="nt-profile" onclick="showPage('profile')"><div class="ni">👤</div><span>Profile</span></div>`;
+  }
+}
+
+/* ── FIREBASE AUTH ── */
+async function signInGoogle(){
+  try{
+    const fb=window._fb;
+    const result=await fb.signInWithPopup(fb.auth,fb.googleProvider);
+    await saveUserFS(result.user);closeModal();
+  }catch(e){simulateLogin();}
+}
+async function signInEmail(isReg){
+  const email=document.getElementById('auth-email')?.value.trim();
+  const pass=document.getElementById('auth-pass')?.value.trim();
+  if(!email||!pass){alert('Please enter email and password.');return;}
+  try{
+    const fb=window._fb;
+    const result=isReg
+      ?await fb.createUserWithEmailAndPassword(fb.auth,email,pass)
+      :await fb.signInWithEmailAndPassword(fb.auth,email,pass);
+    await saveUserFS(result.user);closeModal();
+  }catch(e){simulateLogin(email);}
+}
+async function saveUserFS(user){
+  try{
+    const fb=window._fb;
+    await fb.setDoc(fb.doc(fb.db,'users',user.uid),
+      {name:user.displayName||user.email,email:user.email,photo:user.photoURL||'',
+       role:S.role,coins:0,createdAt:fb.serverTimestamp()},{merge:true});
+    S.currentUser=user;
+    S.userProfile={name:user.displayName||user.email,email:user.email,coins:0};
+    saveCoins(getCoins());renderProfile();
+  }catch(e){simulateLogin(user.email);}
+}
+function simulateLogin(email){
+  S.currentUser={uid:'demo_'+(email||'user'),email:email||'user@demo.com'};
+  S.userProfile={name:email||'Demo User',email:email||'user@demo.com',coins:getCoins()};
+  saveCoins(getCoins());closeModal();renderProfile();
+}
+async function doSignOut(){
+  try{await window._fb.signOut(window._fb.auth);}catch(e){}
+  S.currentUser=null;S.userProfile=null;
+  renderProfile();showPage('home');
+}
+
+/* ── TRIAGE ── */
+function resetTriage(){
+  S.triageAnswers={};S.triageStep=1;
+  document.querySelectorAll('.triage-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('ts1').classList.add('active');
+  document.querySelectorAll('.opt-item').forEach(o=>o.classList.remove('sel'));
+  document.querySelectorAll('[id^="ts"][id$="-next"]').forEach(b=>b.disabled=true);
+  const ci=document.getElementById('triage-city');if(ci)ci.value='';
+  updateTriageHdr();
+}
+function updateTriageHdr(){
+  const c=TRIAGE_CFG[S.triageStep-1];
+  document.getElementById('triage-step-lbl').textContent=`Step ${S.triageStep} of 5`;
+  document.getElementById('triage-q').textContent=c.q;
+  document.getElementById('triage-hint').textContent=c.hint;
+  document.getElementById('prog-fill').style.width=c.pct;
+}
+function selTriageOpt(el,key,val){
+  el.closest('.triage-step').querySelectorAll('.opt-item').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');S.triageAnswers[key]=val;
+  const nb=el.closest('.triage-step').querySelector('.btn-next');if(nb)nb.disabled=false;
+}
+function selTriageList(el,key,val){
+  el.closest('.triage-step').querySelectorAll('.opt-item').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');S.triageAnswers[key]=val;
+  const nb=el.closest('.triage-step').querySelector('.btn-next');if(nb)nb.disabled=false;
+}
+function goTriageStep(n){
+  document.getElementById('ts'+S.triageStep).classList.remove('active');
+  S.triageStep=n;document.getElementById('ts'+n).classList.add('active');updateTriageHdr();
+}
+function checkTriageLoc(){
+  const v=document.getElementById('triage-city').value.trim();
+  S.triageAnswers.location=v;
+  document.getElementById('ts5-next').disabled=v.length<2;
+}
+function showTriageResults(){
+  const key=S.triageAnswers.concern||'all';
+  const list=key==='all'?getDoctors().filter(d=>d.active):getDoctors().filter(d=>d.key===key&&d.active);
+  document.getElementById('dir-lbl').textContent='Results for "'+(S.triageAnswers.location||'Your Area')+'"';
+  document.getElementById('dir-title').textContent=list.length+' Doctor'+(list.length!==1?'s':'');
+  renderDoctors(list,'dir-list');showPage('directory');
+}
+
+/* ── CHECKOUT ── */
+function openCheckout(docId){
+  const d=getDoctors().find(x=>x.id===docId);if(!d)return;
+  S.activeDoc=d;
+  document.getElementById('co-name').textContent=d.name;
+  document.getElementById('co-spec').textContent=d.spec+' · ⭐ '+d.rating;
+  document.getElementById('co-hosp').textContent='🏥 '+d.hospital+' · '+d.city;
+  calcReceipt();S.selDate=DATES[0].full;S.selTime='';
+  buildDates();buildTimes();
+  document.querySelectorAll('.pay-item').forEach((p,i)=>p.classList.toggle('sel',i===0));
+  showPage('checkout');
+}
+function calcReceipt(){
+  const d=S.activeDoc;if(!d)return;
+  const sub=d.fee+49;const gst=Math.round(sub*0.18);const total=sub+gst;
+  document.getElementById('rc-fee').textContent='₹'+d.fee;
+  document.getElementById('rc-gst').textContent='₹'+gst;
+  document.getElementById('rc-total').textContent='₹'+total;
+  document.getElementById('pay-amt').textContent='₹'+total;
+}
+function buildDates(){
+  document.getElementById('date-scroll').innerHTML=DATES.map((d,i)=>
+    `<div class="date-chip${i===0?' sel':''}" onclick="selDate(this,'${d.full}')">
+      <span class="date-day">${d.day}</span><span class="date-num">${d.num}</span></div>`).join('');
+}
+function selDate(el,val){document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');S.selDate=val;}
+function buildTimes(){
+  document.getElementById('time-grid').innerHTML=TIMES.map((tm,i)=>
+    `<div class="time-chip${BUSY_TIMES.includes(i)?' busy':''}" onclick="${BUSY_TIMES.includes(i)?'':'selTime(this,\''+tm+'\')'}">${tm}</div>`).join('');
+}
+function selTime(el,val){document.querySelectorAll('.time-chip:not(.busy)').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');S.selTime=val;}
+function selPay(el){document.querySelectorAll('.pay-item').forEach(p=>p.classList.remove('sel'));el.classList.add('sel');}
+
+/* ── PAYMENT ── */
+function doPayment(){
+  if(!S.selTime){alert('Please select an appointment time.');return;}
+  const d=S.activeDoc;if(!d)return;
+  const total=d.fee+49+Math.round((d.fee+49)*0.18);
+  const payMode=document.querySelector('.pay-item.sel .pay-name')?.textContent||'';
+  if(payMode.includes('Clinic')){showSuccess(total,'CASH');return;}
+  const opts={
+    key:RZP_KEY,amount:total*100,currency:'INR',name:COMPANY,
+    description:`Consultation with ${d.name}`,
+    handler:function(resp){
+      saveBookingFS(resp.razorpay_payment_id,total);
+      showSuccess(total,resp.razorpay_payment_id);
+    },
+    prefill:{name:S.userProfile?.name||'',email:S.userProfile?.email||''},
+    theme:{color:'#4F46E5'}
+  };
+  try{new Razorpay(opts).open();}
+  catch(e){if(confirm(`Demo: Confirm payment of ₹${total}?`))showSuccess(total,'DEMO_'+Date.now());}
+}
+async function saveBookingFS(payId,amount){
+  try{
+    const fb=window._fb;if(!fb||!S.currentUser)return;
+    await fb.addDoc(fb.collection(fb.db,'bookings'),{
+      patientId:S.currentUser.uid,doctorId:S.activeDoc.id,
+      doctorName:S.activeDoc.name,date:S.selDate,time:S.selTime,
+      amount,paymentId:payId,status:'confirmed',createdAt:fb.serverTimestamp()
+    });
+  }catch(e){}
+}
+function showSuccess(total,payId){
+  const confId='AP'+Math.random().toString(36).substr(2,8).toUpperCase();
+  document.getElementById('conf-id').textContent=confId;
+  document.getElementById('conf-doc').textContent=S.activeDoc.name;
+  document.getElementById('conf-dt').textContent=S.selDate+' · '+S.selTime;
+  document.getElementById('conf-hosp').textContent=S.activeDoc.hospital;
+  document.getElementById('conf-amt').textContent='₹'+total;
+  showPage('success');
+}
+function doShare(){
+  const id=document.getElementById('conf-id').textContent;
+  if(navigator.share)navigator.share({title:'DocMatch Booking',text:`Confirmed! ID: ${id} — ${S.activeDoc?.name}`,url:location.href});
+  else alert('Booking ID: '+id);
+}
+
+/* ── PLANS ── */
+function renderPlans(){
+  const plans=[
+    {id:'premium',label:t('planPremium'),price:'₹799',sub:'/month',featured:true,
+     features:[t('featureHome'),t('featureBadge'),t('featurePriority'),t('featureAlerts')]},
+    {id:'basic',label:t('planBasic'),price:'₹300',sub:'/month',featured:false,
+     features:[t('featureStandard'),t('featureSearch')]}
+  ];
+  document.getElementById('plans-container').innerHTML=plans.map(p=>`
+    <div class="plan-card${p.featured?' featured':''}">
+      <div style="font-size:${p.featured?'2.8':'2.2'}rem">${p.featured?'💎':'📋'}</div>
+      <div style="font-weight:800;font-size:1.2rem;margin-top:6px">${p.label}</div>
+      <div class="plan-price mt8">${p.price}<span>${p.sub}</span></div>
+      <div class="feature-list">${p.features.map(f=>`<div class="feature-item">${f}</div>`).join('')}</div>
+      <button class="btn ${p.featured?'btn-gold':'btn-outline'} btn-full mt8" onclick="openDocForm('${p.id}')">
+        ${p.featured?'✨ Get '+p.label:'Select '+p.label}</button>
+    </div>`).join('');
+}
+
+let selectedPlan='premium';
+function openDocForm(planId){
+  selectedPlan=planId;const price=planId==='premium'?799:300;
+  document.getElementById('modal-body').innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">📋 List Your Practice</div>
+    <div class="modal-sub">${planId==='premium'?'👑 Premium Pro · ₹799/month':'📋 Basic · ₹300/month'}</div>
+    <label class="form-label">Full Name &amp; Credentials</label>
+    <input class="input" id="df-name" placeholder="Dr. Firstname Lastname, MBBS, MD">
+    <label class="form-label">Registration Number (NMC / State Medical Council)</label>
+    <input class="input" id="df-reg" placeholder="e.g. MCI-12345 or GMC-67890">
+    <label class="form-label">Upload Degree Certificate (PDF/JPG)</label>
+    <input class="input" type="file" id="df-degree" accept=".pdf,.jpg,.jpeg,.png" style="padding:10px">
+    <label class="form-label">Specialty</label>
+    <select class="input" id="df-spec">
+      <option value="">Select Specialty</option>
+      <option>Cardiology</option><option>Dermatology</option>
+      <option>Gynecology &amp; Obstetrics</option><option>Neurology</option>
+      <option>Orthopedics</option><option>Pediatrics</option>
+      <option>General Medicine</option><option>ENT</option>
+      <option>Ophthalmology</option><option>Psychiatry</option>
+    </select>
+    <label class="form-label">City</label>
+    <select class="input" id="df-city">
+      <option value="">Select City</option>
+      <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
+      <option>Hyderabad</option><option>Ahmedabad</option><option>Palanpur</option>
+      <option>Deesa</option><option>Surat</option><option>Pune</option>
+      <option>Jaipur</option><option>Lucknow</option><option>Other</option>
+    </select>
+    <label class="form-label">Hospital / Clinic Name</label>
+    <input class="input" id="df-hosp" placeholder="Hospital or Clinic name">
+    <label class="form-label">Consultation Fee (₹)</label>
+    <input class="input" type="number" id="df-fee" placeholder="e.g. 800">
+    <label class="form-label">Brief Professional Bio</label>
+    <textarea class="input" id="df-bio" placeholder="Your experience, qualifications, specializations…"></textarea>
+    <div class="consent-row">
+      <input type="checkbox" id="df-consent">
+      <label for="df-consent">${t('consentText')}</label>
+    </div>
+    <div style="background:var(--gold-md);padding:14px;border-radius:16px;margin:12px 0;text-align:center;border:1px solid var(--gold)">
+      💰 <strong>${planId==='premium'?'Premium Pro':'Basic'}: ₹${price}/month</strong><br>
+      <small style="color:var(--gold2)">First month FREE · Auto-renews monthly · Cancel anytime</small>
+    </div>
+    <button class="btn btn-gold btn-full" onclick="submitDocForm()">💳 ${t('payRazorpay')} — ₹${price}</button>
+    <button class="btn btn-outline btn-full mt8" onclick="closeModal()">Cancel</button>`;
+  openModal();
+}
+
+async function submitDocForm(){
+  const name=document.getElementById('df-name')?.value.trim();
+  const reg=document.getElementById('df-reg')?.value.trim();
+  const spec=document.getElementById('df-spec')?.value;
+  const city=document.getElementById('df-city')?.value;
+  const hosp=document.getElementById('df-hosp')?.value.trim();
+  const fee=document.getElementById('df-fee')?.value.trim();
+  const bio=document.getElementById('df-bio')?.value.trim();
+  const consent=document.getElementById('df-consent')?.checked;
+  const degreeFile=document.getElementById('df-degree')?.files[0];
+  if(!name||!spec||!city||!hosp||!fee||!consent){
+    alert('Please complete all required fields and accept the terms.');return;
+  }
+  const price=selectedPlan==='premium'?799:300;
+  const uid=S.currentUser?.uid||'demo_'+Date.now();
+  const trialKey='dm_trial_'+uid;
+  const isFirstTime=!localStorage.getItem(trialKey);
+  if(isFirstTime){
+    localStorage.setItem(trialKey,'1');
+    await activateListing(name,reg,spec,city,hosp,fee,bio,degreeFile,'free_trial','FREE',uid);return;
+  }
+  const opts={
+    key:RZP_KEY,amount:price*100,currency:'INR',name:COMPANY,
+    description:`${selectedPlan==='premium'?'Premium Pro':'Basic'} Listing`,
+    handler:async function(resp){await activateListing(name,reg,spec,city,hosp,fee,bio,degreeFile,selectedPlan,resp.razorpay_payment_id,uid);},
+    prefill:{name},theme:{color:'#4F46E5'}
+  };
+  try{new Razorpay(opts).open();}
+  catch(e){if(confirm(`Demo: Activate ${selectedPlan==='premium'?'Premium (₹799)':'Basic (₹300)'}?`))
+    await activateListing(name,reg,spec,city,hosp,fee,bio,degreeFile,selectedPlan,'DEMO',uid);}
+}
+
+async function activateListing(name,reg,spec,city,hosp,fee,bio,degreeFile,plan,payId,uid){
+  const expiry=new Date();expiry.setDate(expiry.getDate()+30);
+  let degreeUrl='';
+  try{
+    if(degreeFile&&window._fb){
+      const fb=window._fb;
+      const fr=fb.ref(fb.storage,`degrees/${uid}/${degreeFile.name}`);
+      await fb.uploadBytes(fr,degreeFile);
+      degreeUrl=await fb.getDownloadURL(fr);
+    }
+  }catch(e){}
+  const newDoc={
+    id:'user_'+Date.now(),name,spec,key:specToKey(spec),
+    deg:reg?`Reg: ${reg}`:'Listed practitioner',
+    exp:'Check clinic for OPD hours',fee:parseInt(fee),rating:4.5,
+    available:true,city,hospital:hosp,address:city,phone:'',
+    verified:false,premium:plan==='premium',bestChoice:false,
+    isUser:true,active:true,plan,planExpiry:expiry.toISOString(),
+    degreeUrl,bio,registrationNo:reg,paymentId:payId,userId:uid
+  };
+  try{
+    if(window._fb&&S.currentUser){
+      const fb=window._fb;
+      await fb.setDoc(fb.doc(fb.db,'doctors',newDoc.id),{...newDoc,createdAt:fb.serverTimestamp()});
+    }
+  }catch(e){}
+  const stored=JSON.parse(localStorage.getItem('dm_user_doctors')||'[]');
+  stored.push(newDoc);
+  localStorage.setItem('dm_user_doctors',JSON.stringify(stored));
+  closeModal();
+  alert(`✅ Listing Activated!\n\nName: ${name}\nPlan: ${plan==='premium'?'👑 Premium Pro':plan==='free_trial'?'🎁 Free Trial (1st Month FREE)':'📋 Basic'}\nExpires: ${expiry.toLocaleDateString()}\n\n⚠️ Your listing will show as "Pending Verification" until our team reviews your credentials within 24–48 hours.`);
+  renderDoctors();renderDocDash();renderProfile();
+}
+function specToKey(spec){
+  return{Cardiology:'cardio',Dermatology:'derma','Gynecology & Obstetrics':'gynae',
+    Neurology:'neuro',Orthopedics:'ortho',Pediatrics:'pedia'}[spec]||'general';
+}
+
+/* ── DOCTOR DASHBOARD ── */
+function renderDocDash(){
+  const stored=JSON.parse(localStorage.getItem('dm_user_doctors')||'[]');
+  const uid=S.currentUser?.uid||'demo';
+  const my=stored.filter(d=>d.userId&&d.userId.startsWith(uid.split('_')[0]));
+  const el=document.getElementById('doc-my-listings-dash');if(!el)return;
+  if(!my.length){el.innerHTML='';return;}
+  el.innerHTML=`<div class="sec-lbl mb8">${t('myListings')}</div>`+
+    my.map(d=>`<div class="listing-card">
+      <div class="listing-name">${d.name}</div>
+      <div class="listing-meta">${d.spec} · ${d.city} · 🏥 ${d.hospital}</div>
+      <div class="listing-meta">Plan: ${d.plan==='premium'?'👑 Premium Pro':d.plan==='free_trial'?'🎁 Free Trial':'📋 Basic'} · Fee: ₹${d.fee}</div>
+      ${d.verified?`<span class="badge badge-green">✅ Verified</span>`:
+        `<span class="badge badge-plum">⏳ Pending Verification</span>`}
+      <div class="${new Date(d.planExpiry)>new Date()?'listing-active':'listing-expired'}" style="margin-top:6px">
+        ${new Date(d.planExpiry)>new Date()?`${t('listingActive')} ${new Date(d.planExpiry).toLocaleDateString()}`:t('listingExpired')}
+      </div></div>`).join('');
+}
+
+/* ── PROFILE ── */
+function renderProfile(){
+  const stored=JSON.parse(localStorage.getItem('dm_user_doctors')||'[]');
+  const uid=S.currentUser?.uid||'';
+  const my=stored.filter(d=>d.userId&&uid&&d.userId.startsWith(uid.split('_')[0]));
+  const loggedIn=!!S.currentUser;
+  const r=S.role;
+  document.getElementById('profile-content').innerHTML=`
+    <div class="profile-hero">
+      <div class="avatar-ring"><div class="avatar-inner">${r==='patient'?'👤':'👨‍⚕️'}</div></div>
+      <div class="profile-name">${loggedIn?(S.userProfile?.name||'User'):(r==='patient'?'Patient':'Doctor')}</div>
+      <div class="profile-sub">${loggedIn?(S.userProfile?.email||''):'Sign in for full access'}</div>
+      <div class="prof-tag ${r==='patient'?'patient-t':'doctor-t'}">${r==='patient'?'Health Seeker':'Medical Practitioner'}</div>
+      <div class="stat-row">
+        <div><div class="stat-val">🪙 ${getCoins()}</div><div class="stat-lbl">Coins</div></div>
+        <div><div class="stat-val">${my.length}</div><div class="stat-lbl">Listings</div></div>
+        <div><div class="stat-val">0</div><div class="stat-lbl">Bookings</div></div>
+      </div>
+    </div>
+    ${!loggedIn?`<div class="card card-gold mb14 text-center">
+      <div style="font-size:2rem;margin-bottom:8px">🔐</div>
+      <div style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;margin-bottom:6px">${t('signIn')}</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:14px">Sign in to book appointments and manage your profile.</p>
+      <button class="btn btn-gold btn-full" onclick="openAuthModal()">${t('signInGoogle')}</button></div>`:
+    `<div class="card mb14" style="background:var(--teal-lt);border:1px solid var(--teal)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.5rem">✅</span>
+        <div><div style="font-weight:800;color:#065F46">Signed In</div>
+        <div style="font-size:.76rem;color:#065F46">${S.userProfile?.email||''}</div></div>
+      </div></div>`}
+    ${my.length>0?`<div class="sec-lbl mb8">${t('myListings')}</div>`+
+      my.map(d=>`<div class="listing-card">
+        <div class="listing-name">${d.name}</div>
+        <div class="listing-meta">${d.spec} · ${d.city}</div>
+        ${d.verified?`<span class="badge badge-green">✅ Verified</span>`:
+          `<span class="badge badge-plum">⏳ Pending Verification</span>`}
+        <div class="${new Date(d.planExpiry)>new Date()?'listing-active':'listing-expired'}" style="margin-top:5px">
+          ${new Date(d.planExpiry)>new Date()?`Active until ${new Date(d.planExpiry).toLocaleDateString()}`:
+            'Expired'}
+        </div></div>`).join(''):
+      (r==='doctor'?`<div class="card text-center mb14"><p style="color:var(--muted)">${t('noListings')}</p>
+        <button class="btn btn-gold mt8" onclick="showPage('subscription')">${t('listPractice')}</button></div>`:'')}
+    <div class="pm-list mt16">
+      ${loggedIn?`<div class="pm-item" onclick="doSignOut()">
+        <div class="pm-icon">🚪</div>
+        <div><div class="pm-title" style="color:var(--red)">${t('signOut')}</div></div>
+        <span class="pm-arrow">›</span></div>`:
+      `<div class="pm-item" onclick="openAuthModal()">
+        <div class="pm-icon">🔐</div>
+        <div><div class="pm-title">${t('signIn')}</div></div>
+        <span class="pm-arrow">›</span></div>`}
+      <div class="pm-item" onclick="switchRole()">
+        <div class="pm-icon">🔄</div>
+        <div><div class="pm-title">${t('switchRole')}</div>
+        <div class="pm-sub">${r==='patient'?'Switch to Doctor mode':'Switch to Patient mode'}</div></div>
+        <span class="pm-arrow">›</span></div>
+      <div class="pm-item" onclick="document.getElementById('lang-overlay').classList.remove('gone')">
+        <div class="pm-icon">🌐</div>
+        <div><div class="pm-title">Language</div><div class="pm-sub">English · हिन्दी · ગુજરાતી</div></div>
+        <span class="pm-arrow">›</span></div>
+    </div>
+    <p class="fs-note mt16">DocMatch Pro · Secured by Razorpay · NMC-verified doctors<br>
+    <small>DocMatch Pro is a listing platform, not a medical provider. Always consult a qualified physician.</small></p>`;
+}
+
+/* ── AUTH MODAL ── */
+function openAuthModal(){
+  document.getElementById('modal-body').innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">${t('signIn')}</div>
+    <div class="modal-sub">Access your bookings, manage listings &amp; earn coins.</div>
+    <button class="btn btn-gold btn-full mb14" onclick="signInGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:4px">
+        <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.7 30.3.5 24 .5 14.6.5 6.6 6.1 3 14.2l7.8 6.1C12.7 13 17.9 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/>
+        <path fill="#FBBC05" d="M10.8 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7L2.5 13.2A23.5 23.5 0 0 0 .5 24c0 3.8.9 7.4 2.5 10.6l7.8-5.9z"/>
+        <path fill="#34A853" d="M24 47.5c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.1 0-11.3-3.5-13.2-8.7L3 35.8C6.6 43.8 14.6 47.5 24 47.5z"/>
+      </svg>${t('signInGoogle')}
+    </button>
+    <div style="text-align:center;color:var(--muted);font-size:.8rem;margin:10px 0">${t('orEmail')}</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-si" onclick="switchAuthTab('signin')">Sign In</div>
+      <div class="auth-tab" id="tab-reg" onclick="switchAuthTab('register')">Register</div>
+    </div>
+    <input class="input" type="email" id="auth-email" placeholder="${t('emailPlaceholder')}">
+    <input class="input" type="password" id="auth-pass" placeholder="${t('passPlaceholder')}">
+    <button class="btn btn-primary btn-full" id="auth-btn" onclick="signInEmail(false)">${t('signInBtn')}</button>
+    <button class="btn btn-outline btn-full mt8" onclick="closeModal()">Cancel</button>`;
+  openModal();
+}
+function switchAuthTab(m){
+  document.getElementById('tab-si').className='auth-tab'+(m==='signin'?' active':'');
+  document.getElementById('tab-reg').className='auth-tab'+(m==='register'?' active':'');
+  const btn=document.getElementById('auth-btn');
+  if(btn){btn.textContent=m==='register'?t('registerBtn'):t('signInBtn');
+    btn.onclick=()=>signInEmail(m==='register');}
+}
+
+/* ── TRIVIA ── */
+function renderTrivia(){
+  const done=localStorage.getItem('dm_trivia')==='true';
+  const box=document.getElementById('trivia-box');
+  if(done){
+    box.innerHTML=`<div style="text-align:center;padding:20px 0">
+      <div style="font-size:3.5rem;margin-bottom:12px">🏆</div>
+      <div style="font-family:var(--font-d);font-size:1.5rem;font-weight:700;margin-bottom:8px">${t('triviaComplete')}</div>
+      <p style="color:var(--muted);margin-bottom:16px">${t('triviaEarned')} ${localStorage.getItem('dm_trivia_earned')||0} ${t('triviaCoins')}</p>
+      <button class="btn btn-primary btn-full" onclick="showPage('home')">${t('backHome')}</button></div>`;
+    return;
+  }
+  S.triviaIndex=0;S.triviaScore=0;S.triviaAnswered=false;showTriviaQ();
+}
+function showTriviaQ(){
+  const q=TRIVIA[S.triviaIndex];
+  document.getElementById('trivia-box').innerHTML=`
+    <h2 style="font-family:var(--font-d);margin-bottom:14px;text-align:center">🧠 Health Trivia</h2>
+    <div style="background:var(--plum-lt);border:1px solid #C7D2FE;border-radius:14px;padding:14px;margin-bottom:14px">
+      <div style="color:var(--plum);font-weight:800;font-size:.72rem;margin-bottom:4px">Q${S.triviaIndex+1} / ${TRIVIA.length}</div>
+      <div style="font-weight:700;font-size:.95rem">${q.q[LANG]||q.q.en}</div>
+    </div>
+    <div class="gap12">${q.o.map((opt,i)=>
+      `<div style="background:var(--white);border:2px solid var(--line);border-radius:50px;
+        padding:12px 16px;cursor:pointer;font-weight:600;transition:.2s"
+        id="opt-${i}" onclick="answerTrivia(${i})">${opt}</div>`).join('')}</div>
+    <div id="trivia-fb" class="mt12" style="font-weight:800;text-align:center;font-size:.95rem"></div>
+    <button class="btn btn-primary btn-full mt12" id="trivia-next" style="display:none" onclick="nextTriviaQ()">
+      ${S.triviaIndex<TRIVIA.length-1?t('nextQuestion'):t('backHome')}</button>`;
+}
+function answerTrivia(sel){
+  if(S.triviaAnswered)return;S.triviaAnswered=true;
+  const q=TRIVIA[S.triviaIndex];
+  const opts=document.querySelectorAll('[id^="opt-"]');
+  if(sel===q.c){opts[sel].style.borderColor='var(--teal)';opts[sel].style.background='var(--teal-lt)';
+    S.triviaScore+=2;document.getElementById('trivia-fb').innerHTML='<span style="color:var(--teal)">✅ Correct! +2 coins</span>';}
+  else{opts[sel].style.borderColor='var(--red)';opts[sel].style.background='var(--red-lt)';
+    opts[q.c].style.borderColor='var(--teal)';opts[q.c].style.background='var(--teal-lt)';
+    document.getElementById('trivia-fb').innerHTML='<span style="color:var(--red)">❌ Incorrect</span>';}
+  document.getElementById('trivia-next').style.display='block';
+}
+function nextTriviaQ(){
+  S.triviaAnswered=false;S.triviaIndex++;
+  if(S.triviaIndex>=TRIVIA.length){
+    localStorage.setItem('dm_trivia','true');
+    localStorage.setItem('dm_trivia_earned',S.triviaScore);
+    saveCoins(getCoins()+S.triviaScore);renderTrivia();
+  }else showTriviaQ();
+}
+
+/* ── MODAL ── */
+function openModal(){document.getElementById('main-modal').classList.add('open');}
+function closeModal(){document.getElementById('main-modal').classList.remove('open');}
+document.getElementById('main-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+/* ── EXPIRE CHECK ── */
+function checkExpired(){
+  const stored=JSON.parse(localStorage.getItem('dm_user_doctors')||'[]');
+  const now=new Date();let changed=false;
+  stored.forEach(d=>{if(d.active&&d.planExpiry&&new Date(d.planExpiry)<=now){d.active=false;changed=true;}});
+  if(changed)localStorage.setItem('dm_user_doctors',JSON.stringify(stored));
+}
+
+/* ── FIREBASE AUTH LISTENER ── */
+window.addEventListener('load',()=>{
+  try{
+    window._fb.onAuthStateChanged(window._fb.auth,async user=>{
+      if(user){
+        S.currentUser=user;
+        try{
+          const fb=window._fb;
+          const snap=await fb.getDoc(fb.doc(fb.db,'users',user.uid));
+          S.userProfile=snap.exists()?snap.data():{name:user.displayName||user.email,email:user.email,coins:0};
+        }catch(e){S.userProfile={name:user.displayName||user.email,email:user.email,coins:0};}
+        saveCoins(getCoins());renderProfile();
+      }
+    });
+  }catch(e){}
+  checkExpired();
+  setInterval(checkExpired,60*60*1000);
+});
+
+/* ── INIT ── */
+(function init(){
+  const savedLang=localStorage.getItem('dm_lang');
+  if(savedLang)selectLang(savedLang);
+  saveCoins(getCoins());
+  const savedRole=localStorage.getItem('dm_role');
+  if(savedRole){setRole(savedRole);}
+})();
 </script>
-
-<button onclick="googleLogin()" class="btn btn-primary">
-Login with Google
-</button>
-
 </body>
 </html>
