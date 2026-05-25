@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -6,7 +6,7 @@
 <title>DocMatch Pro — India's Premier Healthcare Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<!-- FIREBASE: Replace placeholders with your config from https://console.firebase.google.com -->
+<!-- FIREBASE: Correct configuration (replace with your own if needed) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword }
@@ -16,26 +16,25 @@
   import { getStorage, ref, uploadBytes, getDownloadURL }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
-  /* REPLACE THESE 6 VALUES with your Firebase project config */
-    const firebaseConfig = {
-  apiKey: "AIzaSyCJPt74uBMsF3icEtWhQrgzq2jXsOruVoE",
-  authDomain: "find-my-doctor-51d30.firebaseapp.com",
-  projectId: "find-my-doctor-51d30",
-  storageBucket: "find-my-doctor-51d30.firebasestorage.app",
-  messagingSenderId: "490743986459",
-  appId: "1:490743986459:web:c17bd441b51a58fa1c3bbe"
-};
-  
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-const storage = getStorage(app);
-const googleProvider = new GoogleAuthProvider();
-window._fb = { auth, db, storage, googleProvider,
-  signInWithPopup, signOut, onAuthStateChanged,
-  createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  doc, getDoc, setDoc, addDoc, updateDoc,
-  collection, query, where, getDocs, serverTimestamp };
+  // CORRECT Firebase configuration (no duplicate, valid values)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCJPt74uBMsF3icEtWhQrgzq2jXsOruVoE",
+    authDomain: "find-my-doctor-51d30.firebaseapp.com",
+    projectId: "find-my-doctor-51d30",
+    storageBucket: "find-my-doctor-51d30.firebasestorage.app",
+    messagingSenderId: "490743986459",
+    appId: "1:490743986459:web:c17bd441b51a58fa1c3bbe"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const storage = getStorage(app);
+  const googleProvider = new GoogleAuthProvider();
+  window._fb = { auth, db, storage, googleProvider,
+    signInWithPopup, signOut, onAuthStateChanged,
+    createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    doc, getDoc, setDoc, addDoc, updateDoc,
+    collection, query, where, getDocs, serverTimestamp };
 </script>
 <style>
 :root{
@@ -1427,4 +1426,4 @@ window.addEventListener('load',()=>{
 </script>
 
 </body>
-</html>
+</html>    
